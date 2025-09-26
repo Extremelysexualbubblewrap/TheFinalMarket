@@ -1,0 +1,97 @@
+<%# app/views/seller/products/_image_upload.html.erb %>
+<div class="spirit-card"
+     data-controller="image-upload"
+     data-image-upload-url-value="<%= rails_direct_uploads_path %>"
+     data-image-upload-max-files-value="5">
+  
+  <%# Upload Zone %>
+  <div class="p-8 border-2 border-dashed border-spirit-light rounded-lg text-center transition-all duration-300"
+       data-image-upload-target="dropzone">
+    <div class="space-y-4">
+      <div class="mx-auto h-12 w-12 text-spirit-primary">
+        <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+      </div>
+      <div class="text-spirit-dark">
+        <p class="text-lg font-medium">Drag and drop your images here</p>
+        <p class="text-sm text-spirit-dark/70">or</p>
+      </div>
+      <button type="button"
+              class="spirit-button"
+              data-action="image-upload#browse">
+        Browse Files
+      </button>
+      <input type="file"
+             class="hidden"
+             data-image-upload-target="input"
+             data-action="change->image-upload#handleFileSelect"
+             multiple
+             accept="image/*">
+    </div>
+  </div>
+
+  <%# Image Gallery %>
+  <div class="mt-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
+       data-image-upload-target="gallery"
+       data-sortable="true">
+    <% product.gallery_images.each do |image| %>
+      <div class="relative group aspect-square rounded-lg overflow-hidden border-2 border-spirit-light hover:border-spirit-secondary transition-all duration-300"
+           data-preview-id="<%= image.id %>">
+        <%= image_tag image, class: "w-full h-full object-cover" %>
+        
+        <div class="absolute inset-0 bg-spirit-dark/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-2">
+          <button type="button"
+                  class="text-white hover:text-spirit-accent transition-colors"
+                  data-action="image-cropper#open"
+                  data-image-url="<%= url_for(image) %>">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z" />
+            </svg>
+          </button>
+          <button type="button"
+                  class="text-white hover:text-red-500 transition-colors"
+                  data-action="image-upload#removeImage">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <%= render 'cropper_modal' %>
+
+  <%# Template for new uploads %>
+  <template data-image-upload-target="template">
+    <div class="relative group aspect-square rounded-lg overflow-hidden border-2 border-spirit-light hover:border-spirit-secondary transition-all duration-300"
+         data-preview-id="PREVIEW_ID">
+      <img class="w-full h-full object-cover">
+      
+      <div class="absolute inset-0 bg-spirit-dark/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-2">
+        <button type="button"
+                class="text-white hover:text-spirit-accent transition-colors"
+                data-action="image-cropper#open"
+                data-image-url="">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z" />
+          </svg>
+        </button>
+        <button type="button"
+                class="absolute top-2 right-2 text-white hover:text-red-500 transition-colors"
+                data-action="image-upload#removeImage">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <%# Loading Overlay %>
+      <div class="absolute inset-0 flex items-center justify-center bg-spirit-dark/30 uploading-overlay">
+        <div class="spirit-loader w-8 h-8"></div>
+      </div>
+    </div>
+  </template>
+</div>

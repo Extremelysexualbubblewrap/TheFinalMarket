@@ -1,0 +1,34 @@
+<h1>Apply to be a Gem</h1>
+
+<%= form_with(model: @seller_application, url: seller_applications_path) do |form| %>
+  <% if @seller_application.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@seller_application.errors.count, "error") %> prohibited this seller application from being saved:</h2>
+
+      <ul>
+        <% @seller_application.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :business_name %>
+    <%= form.text_field :business_name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :reason_for_selling %>
+    <%= form.text_area :reason_for_selling %>
+  </div>
+
+  <div class="field">
+    <%= form.label :website_or_social_media %>
+    <%= form.text_field :website_or_social_media %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit "Submit Application" %>
+  </div>
+<% end %>

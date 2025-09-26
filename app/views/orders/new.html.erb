@@ -1,0 +1,75 @@
+<%# app/views/orders/new.html.erb %>
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-2xl font-bold mb-6">Checkout</h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div>
+      <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 class="text-lg font-bold mb-4">Order Summary</h2>
+        <div class="space-y-4">
+          <% @cart_items.each do |cart_item| %>
+            <div class="flex justify-between items-center">
+              <div class="flex items-center">
+                <% if cart_item.item.images.attached? %>
+                  <%= image_tag cart_item.item.images.first, class: "h-12 w-12 rounded object-cover" %>
+                <% end %>
+                <div class="ml-4">
+                  <h3 class="text-sm font-medium"><%= cart_item.item.name %></h3>
+                  <p class="text-sm text-gray-500">Quantity: <%= cart_item.quantity %></p>
+                </div>
+              </div>
+              <p class="text-sm font-medium">
+                $<%= number_with_precision(cart_item.subtotal, precision: 2) %>
+              </p>
+            </div>
+          <% end %>
+        </div>
+        <div class="mt-6 pt-6 border-t">
+          <div class="flex justify-between text-lg font-bold">
+            <span>Total</span>
+            <span>$<%= number_with_precision(@total, precision: 2) %></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <%= form_with(model: @order, local: true, class: "bg-white rounded-lg shadow p-6") do |f| %>
+        <% if @order.errors.any? %>
+          <div class="bg-red-50 text-red-500 p-4 rounded-lg mb-6">
+            <h2 class="text-lg font-bold mb-2">
+              <%= pluralize(@order.errors.count, "error") %> prevented this order from being saved:
+            </h2>
+            <ul class="list-disc pl-5">
+              <% @order.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div class="mb-6">
+          <h2 class="text-lg font-bold mb-4">Shipping Information</h2>
+          <div class="space-y-4">
+            <%= f.label :shipping_address, class: "block text-sm font-medium text-gray-700" %>
+            <%= f.text_area :shipping_address, rows: 4, 
+                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <div class="space-y-4">
+            <%= f.label :notes, "Order Notes (Optional)", class: "block text-sm font-medium text-gray-700" %>
+            <%= f.text_area :notes, rows: 3,
+                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+          </div>
+        </div>
+
+        <div class="flex justify-end">
+          <%= f.submit "Place Order", 
+              class: "px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

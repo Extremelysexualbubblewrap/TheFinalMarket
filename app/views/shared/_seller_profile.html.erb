@@ -1,0 +1,89 @@
+<div class="seller-profile card mb-4">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h3>Seller Profile</h3>
+    <%= render 'shared/seller_badge', user: @user %>
+  </div>
+  
+  <div class="card-body">
+    <% if @user.gem? %>
+      <% if @user.active? %>
+        <div class="seller-stats mb-3">
+          <h4>Seller Stats</h4>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="stat-card text-center p-3 border rounded">
+                <h5>Products</h5>
+                <p class="h3"><%= @user.products.count %></p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="stat-card text-center p-3 border rounded">
+                <h5>Average Rating</h5>
+                <p class="h3">
+                  <% avg_rating = @user.products.joins(:reviews).average(:rating) %>
+                  <%= avg_rating ? "#{avg_rating.round(1)}/5.0" : "N/A" %>
+                </p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="stat-card text-center p-3 border rounded">
+                <h5>Member Since</h5>
+                <p class="h3"><%= @user.created_at.strftime("%b %Y") %></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <% if @user.seller_application %>
+          <div class="business-info mb-3">
+            <h4>Business Information</h4>
+            <p><strong>Business Name:</strong> <%= @user.seller_application.business_name %></p>
+            <% if @user.seller_application.website_or_social_media.present? %>
+              <p>
+                <strong>Website/Social:</strong>
+                <%= link_to @user.seller_application.website_or_social_media, @user.seller_application.website_or_social_media, target: "_blank" %>
+              </p>
+            <% end %>
+          </div>
+        <% end %>
+
+        <div class="recent-reviews">
+          <h4>Recent Reviews</h4>
+          <% recent_reviews = Review.joins(:product).where(products: { user_id: @user.id }).latest.limit(5) %>
+          <% if recent_reviews.any? %>
+            <div class="list-group">
+              <% recent_reviews.each do |review| %>
+                <div class="list-group-item">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="mb-1">
+                      <%= link_to review.product.name, product_path(review.product) %>
+                    </h6>
+                    <small><%= "★" * review.rating %></small>
+                  </div>
+                  <p class="mb-1"><%= review.comment %></p>
+                  <small class="text-muted">
+                    By <%= review.user.username %>, <%= time_ago_in_words(review.created_at) %> ago
+                  </small>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="text-muted">No reviews yet.</p>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="alert alert-warning">
+          <% if @user.awaiting_bond? %>
+            This seller is pending bond payment.
+          <% else %>
+            This seller's account is currently inactive.
+          <% end %>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="alert alert-info">
+        This user is not a seller.
+      </div>
+    <% end %>
+  </div>
+</div>

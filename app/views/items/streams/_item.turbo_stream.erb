@@ -1,0 +1,8 @@
+<%# app/views/items/streams/_item.turbo_stream.erb %>
+<%= turbo_stream.update "item_#{item.id}" do %>
+  <%= render partial: "items/item", locals: { item: item } %>
+<% end %>
+
+<%= turbo_stream.update "cart_count" do %>
+  <%= render partial: "shared/cart_count" %>
+<% end %>

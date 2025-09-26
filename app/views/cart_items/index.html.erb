@@ -1,0 +1,76 @@
+<%# app/views/cart_items/index.html.erb %>
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-2xl font-bold mb-6">Shopping Cart</h1>
+
+  <% if @cart_items.any? %>
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subtotal</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @cart_items.each do |cart_item| %>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <%= image_tag cart_item.item.images.first, class: "h-10 w-10 rounded-full" if cart_item.item.images.attached? %>
+                  <div class="ml-4">
+                    <div class="text-sm font-medium text-gray-900">
+                      <%= link_to cart_item.item.name, item_path(cart_item.item) %>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                      Seller: <%= cart_item.item.user.name %>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">$<%= number_with_precision(cart_item.item.price, precision: 2) %></div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <%= form_with(model: cart_item, local: true, class: "flex items-center") do |f| %>
+                  <%= f.number_field :quantity, min: 1, class: "w-16 rounded border-gray-300" %>
+                  <%= f.submit "Update", class: "ml-2 px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700" %>
+                <% end %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                $<%= number_with_precision(cart_item.subtotal, precision: 2) %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <%= button_to "Remove", cart_item_path(cart_item), method: :delete, 
+                    class: "text-red-600 hover:text-red-900",
+                    data: { confirm: "Are you sure you want to remove this item?" } %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-8 flex justify-between items-center">
+      <div class="text-xl font-bold">
+        Total: $<%= number_with_precision(@total, precision: 2) %>
+      </div>
+      <div class="space-x-4">
+        <%= button_to "Clear Cart", clear_cart_items_path, 
+            method: :delete,
+            class: "inline-block px-6 py-2 text-sm font-medium text-red-600 bg-white border border-red-600 rounded hover:bg-red-50",
+            data: { confirm: "Are you sure you want to clear your cart?" } %>
+        <%= link_to "Proceed to Checkout", new_order_path, 
+            class: "inline-block px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700" %>
+      </div>
+    </div>
+  <% else %>
+    <div class="text-center py-12">
+      <p class="text-gray-500 text-lg mb-4">Your cart is empty</p>
+      <%= link_to "Continue Shopping", root_path, 
+          class: "inline-block px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700" %>
+    </div>
+  <% end %>
+</div>

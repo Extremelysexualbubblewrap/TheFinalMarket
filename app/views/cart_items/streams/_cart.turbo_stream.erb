@@ -1,0 +1,12 @@
+<%# app/views/cart_items/streams/_cart.turbo_stream.erb %>
+<%= turbo_stream.update "cart" do %>
+  <%= render partial: "cart_items/cart", locals: { cart_items: current_user.cart_items.includes(:item) } %>
+<% end %>
+
+<%= turbo_stream.update "cart_total" do %>
+  <%= render partial: "cart_items/total" %>
+<% end %>
+
+<%= turbo_stream.update "cart_count" do %>
+  <%= render partial: "shared/cart_count" %>
+<% end %>

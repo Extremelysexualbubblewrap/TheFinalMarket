@@ -1,0 +1,9 @@
+<h1>Pay Seller Bond</h1>
+
+<p>To become a verified seller, you must pay a one-time bond of $100. This bond is refundable if you choose to close your seller account in good standing.</p>
+
+<%= form_with(url: bonds_path) do |form| %>
+  <div class="actions">
+    <%= form.submit "Pay Bond", class: "btn btn-primary" %>
+  </div>
+<% end %>

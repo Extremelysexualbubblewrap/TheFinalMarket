@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  description: MyText
+  status: 1
+  reporter: one
+  reported_user: one
+  moderator: one
+  resolution_notes: MyText
+
+two:
+  title: MyString
+  description: MyText
+  status: 1
+  reporter: two
+  reported_user: two
+  moderator: two
+  resolution_notes: MyText

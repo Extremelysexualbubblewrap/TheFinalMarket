@@ -1,0 +1,90 @@
+<%# app/views/categories/show.html.erb %>
+<div class="container mx-auto px-4 py-8">
+  <div class="mb-6">
+    <nav class="text-sm text-gray-500 mb-4">
+      <%= link_to "Categories", categories_path %> 
+      <% @category.ancestors.each do |ancestor| %>
+        <span class="mx-2">/</span>
+        <%= link_to ancestor.name, category_path(ancestor) %>
+      <% end %>
+      <span class="mx-2">/</span>
+      <span class="text-gray-900"><%= @category.name %></span>
+    </nav>
+
+    <div class="flex justify-between items-center">
+      <h1 class="text-2xl font-bold"><%= @category.name %></h1>
+      <% if current_user&.admin? %>
+        <%= link_to "Edit Category", edit_category_path(@category),
+            class: "px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" %>
+      <% end %>
+    </div>
+
+    <% if @category.description.present? %>
+      <p class="mt-4 text-gray-600"><%= @category.description %></p>
+    <% end %>
+  </div>
+
+  <% if @category.subcategories.any? %>
+    <div class="mb-8">
+      <h2 class="text-xl font-bold mb-4">Subcategories</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <% @category.subcategories.each do |subcategory| %>
+          <%= link_to category_path(subcategory), 
+              class: "block p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow" do %>
+            <h3 class="font-medium text-gray-900"><%= subcategory.name %></h3>
+            <% if subcategory.description.present? %>
+              <p class="mt-1 text-sm text-gray-500">
+                <%= truncate(subcategory.description, length: 60) %>
+              </p>
+            <% end %>
+            <p class="mt-2 text-sm text-blue-600">
+              <%= pluralize(subcategory.items.count, 'item') %>
+            </p>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <div>
+    <h2 class="text-xl font-bold mb-4">Items in <%= @category.name %></h2>
+    
+    <% if @items.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <% @items.each do |item| %>
+          <div class="bg-white rounded-lg shadow overflow-hidden">
+            <% if item.images.attached? %>
+              <%= image_tag item.images.first, 
+                  class: "w-full h-48 object-cover" %>
+            <% end %>
+            
+            <div class="p-4">
+              <h3 class="font-medium text-gray-900">
+                <%= link_to item.name, item_path(item) %>
+              </h3>
+              <p class="mt-1 text-sm text-gray-500">
+                <%= truncate(item.description, length: 100) %>
+              </p>
+              <div class="mt-2 flex justify-between items-center">
+                <span class="text-lg font-bold text-gray-900">
+                  $<%= number_with_precision(item.price, precision: 2) %>
+                </span>
+                <span class="text-sm text-gray-500">
+                  by <%= item.user.name %>
+                </span>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="mt-8">
+        <%= paginate @items %>
+      </div>
+    <% else %>
+      <p class="text-gray-500 text-center py-8">
+        No items found in this category.
+      </p>
+    <% end %>
+  </div>
+</div>

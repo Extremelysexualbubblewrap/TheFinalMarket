@@ -1,0 +1,101 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>Dispute Management</h2>
+      <div class="btn-group">
+        <%= link_to "All Disputes", moderator_disputes_path, 
+            class: "btn btn-outline-primary #{params[:status].blank? && !params[:unassigned] && !params[:my_cases] ? 'active' : ''}" %>
+        <%= link_to "Unassigned", moderator_disputes_path(unassigned: true), 
+            class: "btn btn-outline-primary #{params[:unassigned] ? 'active' : ''}" %>
+        <%= link_to "My Cases", moderator_disputes_path(my_cases: true), 
+            class: "btn btn-outline-primary #{params[:my_cases] ? 'active' : ''}" %>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">Filter by Status</h5>
+      </div>
+      <div class="card-body">
+        <div class="btn-group w-100">
+          <%= link_to "All", moderator_disputes_path, 
+              class: "btn btn-outline-secondary #{params[:status].blank? ? 'active' : ''}" %>
+          <% Dispute.statuses.keys.each do |status| %>
+            <%= link_to status.titleize, moderator_disputes_path(status: status), 
+                class: "btn btn-outline-secondary #{params[:status] == status ? 'active' : ''}" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <% if @disputes.any? %>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Priority</th>
+                  <th>Status</th>
+                  <th>Title</th>
+                  <th>Reporter</th>
+                  <th>Reported User</th>
+                  <th>Assigned To</th>
+                  <th>Submitted</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @disputes.each do |dispute| %>
+                  <tr>
+                    <td>
+                      <% if dispute.pending? && !dispute.moderator %>
+                        <span class="badge bg-danger">Unassigned</span>
+                      <% end %>
+                    </td>
+                    <td>
+                      <span class="badge bg-<%= {
+                        'pending': 'warning',
+                        'under_review': 'info',
+                        'resolved': 'success',
+                        'dismissed': 'danger'
+                      }[dispute.status.to_sym] %>">
+                        <%= dispute.status.titleize %>
+                      </span>
+                    </td>
+                    <td><%= dispute.title %></td>
+                    <td><%= dispute.reporter.name %></td>
+                    <td><%= dispute.reported_user.name %></td>
+                    <td>
+                      <% if dispute.moderator %>
+                        <%= dispute.moderator.name %>
+                      <% else %>
+                        <em class="text-muted">Unassigned</em>
+                      <% end %>
+                    </td>
+                    <td><%= time_ago_in_words(dispute.created_at) %> ago</td>
+                    <td>
+                      <div class="btn-group">
+                        <%= link_to "View", moderator_dispute_path(dispute), 
+                            class: "btn btn-sm btn-outline-primary" %>
+                        <% if !dispute.moderator %>
+                          <%= button_to "Take Case", assign_moderator_dispute_path(dispute),
+                              method: :patch,
+                              class: "btn btn-sm btn-outline-success" %>
+                        <% end %>
+                      </div>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <div class="text-center py-4">
+            <p class="text-muted mb-0">No disputes found matching your criteria.</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

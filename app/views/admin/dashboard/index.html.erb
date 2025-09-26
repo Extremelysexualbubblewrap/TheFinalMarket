@@ -1,0 +1,77 @@
+<div class="row">
+  <div class="col-md-12">
+    <h1 class="mb-4">Admin Dashboard</h1>
+  </div>
+
+  <div class="col-md-4 mb-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Total Users</h5>
+        <h2 class="card-text"><%= @total_users %></h2>
+        <%= link_to "View All Users", admin_users_path, class: "btn btn-primary" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4 mb-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Total Products</h5>
+        <h2 class="card-text"><%= @total_products %></h2>
+        <%= link_to "View All Products", admin_products_path, class: "btn btn-primary" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4 mb-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Total Orders</h5>
+        <h2 class="card-text"><%= @total_orders %></h2>
+        <button class="btn btn-primary" disabled>View All Orders</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Recent Users</h5>
+        <div class="list-group">
+          <% @recent_users.each do |user| %>
+            <%= link_to admin_user_path(user), class: "list-group-item list-group-item-action" do %>
+              <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1"><%= user.name %></h6>
+                <small><%= time_ago_in_words(user.created_at) %> ago</small>
+              </div>
+              <p class="mb-1"><%= user.email %></p>
+              <small>Role: <%= user.role.titleize %></small>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Recent Products</h5>
+        <div class="list-group">
+          <% @recent_products.each do |product| %>
+            <%= link_to admin_product_path(product), class: "list-group-item list-group-item-action" do %>
+              <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1"><%= product.name %></h6>
+                <small><%= time_ago_in_words(product.created_at) %> ago</small>
+              </div>
+              <p class="mb-1"><%= truncate(product.description, length: 100) %></p>
+              <small>Price: <%= number_to_currency(product.price) %></small>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,15 @@
+<div class="comments-section">
+  <div id="<%= "dispute_#{dispute.id}_comments" %>" class="comments-list mb-4">
+    <% dispute.comments.includes(:user).each do |comment| %>
+      <%= render 'dispute_comments/comment', comment: comment %>
+    <% end %>
+  </div>
+
+  <%= form_with(model: [dispute, DisputeComment.new], local: true, class: 'comment-form') do |f| %>
+    <div class="mb-3">
+      <%= f.text_area :content, class: 'form-control', rows: 3,
+          placeholder: 'Add a comment...', required: true %>
+    </div>
+    <%= f.submit 'Post Comment', class: 'btn btn-primary' %>
+  <% end %>
+</div>

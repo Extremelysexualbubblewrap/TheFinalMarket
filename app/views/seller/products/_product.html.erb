@@ -1,0 +1,89 @@
+<%# app/views/seller/products/_product.html.erb %>
+<%= turbo_frame_tag dom_id(product) do %>
+  <tr data-product-management-target="product"
+      data-product-id="<%= product.id %>"
+      class="group transition-colors hover:bg-spirit-light/20">
+    
+    <td class="px-6 py-4 whitespace-nowrap">
+      <input type="checkbox"
+             data-action="change->product-management#toggleSelection"
+             class="rounded border-spirit-light text-spirit-primary focus:ring-spirit-secondary">
+    </td>
+
+    <td class="px-6 py-4 whitespace-nowrap">
+      <div class="flex items-center">
+        <div class="drag-handle cursor-move mr-3 opacity-0 group-hover:opacity-100 transition-opacity">
+          <svg class="w-5 h-5 text-spirit-dark/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+          </svg>
+        </div>
+        
+        <div class="flex items-center">
+          <%= image_tag product.image.variant(resize_to_fill: [48, 48]),
+              class: "h-12 w-12 rounded-lg object-cover" %>
+          
+          <div class="ml-4" data-controller="quick-edit">
+            <div data-quick-edit-target="display">
+              <div class="text-sm font-medium text-spirit-dark" data-action="click->quick-edit#toggle">
+                <%= product.name %>
+              </div>
+              <div class="text-sm text-spirit-dark/70">
+                <%= truncate(product.description, length: 50) %>
+              </div>
+            </div>
+
+            <%= form_with model: product, url: seller_product_path(product),
+                class: "hidden",
+                data: { quick_edit_target: "form" } do |f| %>
+              <%= f.text_field :name, class: "spirit-input" %>
+              <%= f.submit "Save", class: "spirit-button" %>
+              <button data-action="click->quick-edit#cancel" class="text-sm text-spirit-dark/70">Cancel</button>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </td>
+
+    <td class="px-6 py-4 whitespace-nowrap" data-controller="quick-edit">
+      <div data-quick-edit-target="display" data-action="click->quick-edit#toggle">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= product.stock <= 5 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' %>">
+          <%= product.stock %>
+        </span>
+      </div>
+      <%= form_with model: product, url: seller_product_path(product),
+          class: "hidden",
+          data: { quick_edit_target: "form" } do |f| %>
+        <%= f.number_field :stock, class: "spirit-input w-20" %>
+        <%= f.submit "Save", class: "spirit-button" %>
+        <button data-action="click->quick-edit#cancel" class="text-sm text-spirit-dark/70">Cancel</button>
+      <% end %>
+    </td>
+
+    <td class="px-6 py-4 whitespace-nowrap" data-controller="quick-edit">
+      <div data-quick-edit-target="display" data-action="click->quick-edit#toggle">
+        <div class="text-sm text-spirit-dark">
+          <%= number_to_currency(product.price) %>
+        </div>
+      </div>
+      <%= form_with model: product, url: seller_product_path(product),
+          class: "hidden",
+          data: { quick_edit_target: "form" } do |f| %>
+        <%= f.text_field :price, class: "spirit-input w-24" %>
+        <%= f.submit "Save", class: "spirit-button" %>
+        <button data-action="click->quick-edit#cancel" class="text-sm text-spirit-dark/70">Cancel</button>
+      <% end %>
+    </td>
+
+    <td class="px-6 py-4 whitespace-nowrap">
+      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-spirit-light text-spirit-primary">
+        <%= product.status %>
+      </span>
+    </td>
+
+    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+      <%= link_to "Edit", 
+          edit_seller_product_path(product),
+          class: "text-spirit-primary hover:text-spirit-secondary" %>
+    </td>
+  </tr>
+<% end %>

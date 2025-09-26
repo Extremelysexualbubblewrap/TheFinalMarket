@@ -1,0 +1,2 @@
+module SellerApplicationsHelper
+end

@@ -1,0 +1,126 @@
+<div class="row">
+  <div class="col-md-8">
+    <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="mb-0">Dispute Details</h3>
+        <span class="badge bg-<%= {
+          'pending': 'warning',
+          'under_review': 'info',
+          'resolved': 'success',
+          'dismissed': 'danger'
+        }[@dispute.status.to_sym] %> fs-6">
+          <%= @dispute.status.titleize %>
+        </span>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title"><%= @dispute.title %></h5>
+        <div class="mb-4">
+          <small class="text-muted">
+            Reported by <%= @dispute.reporter.name %> against <%= @dispute.reported_user.name %>
+            <%= time_ago_in_words(@dispute.created_at) %> ago
+          </small>
+        </div>
+        
+        <div class="card mb-4">
+          <div class="card-body">
+            <h6 class="card-subtitle mb-2 text-muted">Description</h6>
+            <p class="card-text"><%= simple_format(@dispute.description) %></p>
+          </div>
+        </div>
+
+        <% if @dispute.resolved? || @dispute.dismissed? %>
+          <div class="card bg-light">
+            <div class="card-body">
+              <h6 class="card-subtitle mb-2">Resolution Notes</h6>
+              <p class="card-text"><%= simple_format(@dispute.resolution_notes) %></p>
+              <small class="text-muted">
+                Resolved by <%= @dispute.moderator.name %> <%= time_ago_in_words(@dispute.updated_at) %> ago
+              </small>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h4>Communication</h4>
+      </div>
+      <div class="card-body">
+        <%= render 'shared/dispute_comments', dispute: @dispute %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header">
+        <h4>Status Timeline</h4>
+      </div>
+      <div class="card-body">
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-marker bg-success"></div>
+            <div class="timeline-content">
+              <h6 class="mb-0">Dispute Submitted</h6>
+              <small class="text-muted"><%= @dispute.created_at.strftime("%B %d, %Y at %I:%M %p") %></small>
+            </div>
+          </div>
+
+          <% if @dispute.moderator %>
+            <div class="timeline-item">
+              <div class="timeline-marker bg-info"></div>
+              <div class="timeline-content">
+                <h6 class="mb-0">Under Review</h6>
+                <small class="text-muted">Assigned to <%= @dispute.moderator.name %></small>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @dispute.resolved? || @dispute.dismissed? %>
+            <div class="timeline-item">
+              <div class="timeline-marker bg-<%= @dispute.resolved? ? 'success' : 'danger' %>"></div>
+              <div class="timeline-content">
+                <h6 class="mb-0"><%= @dispute.status.titleize %></h6>
+                <small class="text-muted"><%= @dispute.updated_at.strftime("%B %d, %Y at %I:%M %p") %></small>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :styles do %>
+  <style>
+    .timeline {
+      position: relative;
+      padding-left: 30px;
+    }
+    
+    .timeline-item {
+      position: relative;
+      padding-bottom: 1.5rem;
+    }
+    
+    .timeline-marker {
+      position: absolute;
+      left: -30px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-top: 5px;
+    }
+    
+    .timeline-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: -24px;
+      top: 15px;
+      width: 1px;
+      height: calc(100% - 5px);
+      background-color: #dee2e6;
+    }
+  </style>
+<% end %>

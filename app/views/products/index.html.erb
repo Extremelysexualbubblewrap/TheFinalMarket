@@ -1,0 +1,35 @@
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Products</h1>
+    <% if user_signed_in? %>
+      <%= link_to "New Product", new_product_path, class: "btn btn-primary" %>
+    <% end %>
+  </div>
+
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    <% @products.each do |product| %>
+      <div class="col">
+        <div class="card h-100">
+          <% if product.image.attached? %>
+            <%= image_tag product.image, class: "card-img-top" %>
+          <% end %>
+          <div class="card-body">
+            <h5 class="card-title"><%= product.name %></h5>
+            <p class="card-text"><%= truncate(product.description, length: 150) %></p>
+            <p class="card-text"><strong>Price:</strong> <%= number_to_currency(product.price) %></p>
+            <p class="card-text">
+              <small class="text-muted">
+                Sold by <%= link_to product.user.name, user_path(product.user) %>
+                <%= render 'shared/seller_badge', user: product.user %>
+                <div class="mt-1">
+                  <%= level_badge(product.user) %>
+                </div>
+              </small>
+            </p>
+            <%= link_to "View Details", product_path(product), class: "btn btn-primary" %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

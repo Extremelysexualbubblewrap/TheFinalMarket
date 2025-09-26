@@ -1,0 +1,49 @@
+<%# app/views/categories/index.html.erb %>
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">Categories</h1>
+    <% if current_user&.admin? %>
+      <%= link_to "New Category", new_category_path,
+          class: "px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" %>
+    <% end %>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <% @categories.each do |category| %>
+      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="p-6">
+          <h2 class="text-xl font-bold mb-4">
+            <%= link_to category.name, category_path(category),
+                class: "text-gray-900 hover:text-blue-600" %>
+          </h2>
+          
+          <% if category.description.present? %>
+            <p class="text-gray-600 mb-4"><%= truncate(category.description, length: 100) %></p>
+          <% end %>
+
+          <% if category.subcategories.any? %>
+            <div class="space-y-2">
+              <h3 class="text-sm font-medium text-gray-500">Subcategories:</h3>
+              <ul class="space-y-1">
+                <% category.subcategories.each do |subcategory| %>
+                  <li>
+                    <%= link_to subcategory.name, category_path(subcategory),
+                        class: "text-sm text-blue-600 hover:text-blue-800" %>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+        </div>
+
+        <% if category.items.exists? %>
+          <div class="px-6 py-4 bg-gray-50 border-t">
+            <p class="text-sm text-gray-600">
+              <%= pluralize(category.items.count, 'item') %> available
+            </p>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

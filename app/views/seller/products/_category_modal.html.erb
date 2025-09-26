@@ -1,0 +1,65 @@
+<%# app/views/seller/products/_category_modal.html.erb %>
+<div class="fixed inset-0 z-50 overflow-y-auto hidden"
+     data-category-modal-target="modal"
+     aria-labelledby="modal-title"
+     role="dialog"
+     aria-modal="true">
+  <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <%# Background overlay %>
+    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+         data-action="click->category-modal#close"
+         aria-hidden="true"></div>
+
+    <%# Modal panel %>
+    <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+      <div class="bg-gradient-to-br from-spirit-light to-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+        <div class="sm:flex sm:items-start">
+          <div class="w-full">
+            <h3 class="text-lg leading-6 font-medium text-spirit-dark" id="modal-title">
+              Select Category
+            </h3>
+            
+            <%# Search input %>
+            <div class="mt-4 relative">
+              <input type="text"
+                     class="spirit-input w-full pl-10"
+                     placeholder="Search categories..."
+                     data-category-modal-target="search"
+                     data-action="input->category-modal#filterCategories">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-spirit-dark/50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            </div>
+
+            <%# Categories grid %>
+            <div class="mt-4 grid grid-cols-2 gap-4 max-h-96 overflow-y-auto spirit-scrollbar">
+              <% Category.all.each do |category| %>
+                <div class="relative group rounded-lg border-2 border-spirit-light p-4 transition-all duration-300 hover:border-spirit-secondary hover:shadow-spirit"
+                     data-category-modal-target="category"
+                     data-category-name="<%= category.name.downcase %>"
+                     data-action="click->category-modal#selectCategory"
+                     data-category-id="<%= category.id %>">
+                  <div class="absolute inset-0 spirit-gradient opacity-0 group-hover:opacity-5 rounded-lg transition-opacity"></div>
+                  <div class="relative z-10">
+                    <p class="font-medium text-spirit-dark"><%= category.name %></p>
+                    <p class="text-sm text-spirit-dark/70"><%= pluralize(category.products.count, 'product') %></p>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+        <button type="button"
+                class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-spirit-primary sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                data-action="category-modal#close">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

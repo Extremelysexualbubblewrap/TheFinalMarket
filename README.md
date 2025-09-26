@@ -1,29 +1,24 @@
-# TheFinalMarket
+# README
 
-**TheFinalMarket** is the first ever fee-free decentralized open market.
+This README would normally document whatever steps are necessary to get the
+application up and running.
 
-## Overview
+Things you may want to cover:
 
-TheFinalMarket is built with Ruby on Rails and aims to provide a decentralized platform for buyers and sellers to transact without any platform-imposed fees.
+* Ruby version
 
-## Features
+* System dependencies
 
-- Fee-free transactions
-- Decentralized architecture
-- Built using Ruby on Rails
+* Configuration
 
-## Getting Started
+* Database creation
 
-To set up the project locally:
+* Database initialization
 
-```bash
-git clone https://github.com/CrysisFangz/TheFinalMarket.git
-cd TheFinalMarket
-bundle install
-rails db:setup
-rails server
-```
+* How to run the test suite
 
-## License
+* Services (job queues, cache servers, search engines, etc.)
 
-This project is open source and available under the [MIT License](LICENSE).
+* Deployment instructions
+
+* ...

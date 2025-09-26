@@ -1,0 +1,52 @@
+<%# app/views/seller/analytics/index.html.erb %>
+<div class="min-h-screen bg-gradient-to-br from-spirit-light to-white" data-controller="chart">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-3xl font-bold bg-gradient-to-r from-spirit-primary to-spirit-secondary bg-clip-text text-transparent mb-8">
+      Sales Analytics
+    </h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <%# Revenue Chart %>
+      <div class="spirit-card">
+        <h2 class="text-xl font-bold text-spirit-dark mb-4">Revenue Over Time</h2>
+        <%= line_chart @revenue_by_day,
+            library: {
+              scales: {
+                y: {
+                  ticks: {
+                    callback: function(value) {
+                      return '$' + value;
+                    }
+                  }
+                }
+              }
+            },
+            colors: ["#6B4FA9", "#9C7BE3"],
+            curve: true,
+            points: true,
+            download: true,
+            prefix: "$",
+            messages: { empty: "No sales data yet" } %>
+      </div>
+
+      <%# Top Selling Products %>
+      <div class="spirit-card">
+        <h2 class="text-xl font-bold text-spirit-dark mb-4">Top Selling Products</h2>
+        <%= bar_chart @top_selling_products,
+            colors: ["#FFB156"],
+            download: true,
+            messages: { empty: "No sales data yet" } %>
+      </div>
+
+      <%# Orders by Status %>
+      <div class="spirit-card">
+        <h2 class="text-xl font-bold text-spirit-dark mb-4">Orders by Status</h2>
+        <%= pie_chart @orders_by_status,
+            colors: ["#6B4FA9", "#9C7BE3", "#FFB156", "#4CAF50", "#ef4444"],
+            donut: true,
+            download: true,
+            messages: { empty: "No orders yet" } %>
+      </div>
+    </div>
+  </div>
+</div>

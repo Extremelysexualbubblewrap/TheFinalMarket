@@ -1,0 +1,65 @@
+:root {
+  /* Custom theme colors inspired by Animal Spirit */
+  --color-spirit-primary: #6B4FA9;     /* Deep mystical purple */
+  --color-spirit-secondary: #9C7BE3;   /* Lighter spiritual purple */
+  --color-spirit-accent: #FFB156;      /* Warm spirit energy orange */
+  --color-spirit-light: #F0E7FF;      /* Soft ethereal light purple */
+  --color-spirit-dark: #2D1B4F;       /* Deep mystical night */
+  --color-nature-green: #4CAF50;      /* Forest green */
+  --color-nature-brown: #8D6E63;      /* Earth brown */
+  
+  /* Animation properties */
+  --spirit-glow: 0 0 15px var(--color-spirit-secondary);
+}
+
+/* Custom Tailwind classes */
+@layer components {
+  .spirit-gradient {
+    background: linear-gradient(135deg, var(--color-spirit-primary), var(--color-spirit-secondary));
+  }
+  
+  .spirit-button {
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-300;
+    background: var(--color-spirit-primary);
+    color: var(--color-spirit-light);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .spirit-button:hover {
+    background: var(--color-spirit-secondary);
+    box-shadow: var(--spirit-glow);
+    transform: translateY(-1px);
+  }
+
+  .spirit-card {
+    @apply bg-white rounded-lg p-4 transition-all duration-300;
+    border: 2px solid var(--color-spirit-light);
+  }
+
+  .spirit-card:hover {
+    border-color: var(--color-spirit-secondary);
+    box-shadow: var(--spirit-glow);
+  }
+
+  .spirit-input {
+    @apply rounded-lg border-2 px-3 py-2 transition-all duration-300;
+    border-color: var(--color-spirit-light);
+  }
+
+  .spirit-input:focus {
+    border-color: var(--color-spirit-secondary);
+    box-shadow: var(--spirit-glow);
+    outline: none;
+  }
+}
+
+/* Custom animations */
+@keyframes spirit-pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+.spirit-pulse {
+  animation: spirit-pulse 2s infinite;
+}

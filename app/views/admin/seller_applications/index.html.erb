@@ -1,0 +1,22 @@
+<h1>Pending Seller Applications</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>User</th>
+      <th>Business Name</th>
+      <th>Submitted</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @seller_applications.each do |application| %>
+      <tr>
+        <td><%= application.user.username %></td>
+        <td><%= application.business_name %></td>
+        <td><%= time_ago_in_words(application.created_at) %> ago</td>
+        <td><%= link_to 'View', admin_seller_application_path(application) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

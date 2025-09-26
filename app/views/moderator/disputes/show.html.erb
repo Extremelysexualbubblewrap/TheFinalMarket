@@ -1,0 +1,160 @@
+<div class="row">
+  <div class="col-md-8">
+    <div class="card mb-4">
+      <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <h3 class="mb-0">Dispute #<%= @dispute.id %></h3>
+          <span class="badge bg-<%= {
+            'pending': 'warning',
+            'under_review': 'info',
+            'resolved': 'success',
+            'dismissed': 'danger'
+          }[@dispute.status.to_sym] %> fs-6">
+            <%= @dispute.status.titleize %>
+          </span>
+        </div>
+      </div>
+      <div class="card-body">
+        <h4 class="card-title"><%= @dispute.title %></h4>
+        <div class="mb-4">
+          <small class="text-muted">
+            Reported by <%= link_to @dispute.reporter.name, admin_user_path(@dispute.reporter) %>
+            against <%= link_to @dispute.reported_user.name, admin_user_path(@dispute.reported_user) %>
+            <%= time_ago_in_words(@dispute.created_at) %> ago
+          </small>
+        </div>
+
+        <div class="card mb-4">
+          <div class="card-body">
+            <h6 class="card-subtitle mb-2 text-muted">Description</h6>
+            <p class="card-text"><%= simple_format(@dispute.description) %></p>
+          </div>
+        </div>
+
+        <% if @dispute.resolution_notes? %>
+          <div class="card mb-4">
+            <div class="card-body">
+              <h6 class="card-subtitle mb-2 text-muted">Resolution Notes</h6>
+              <p class="card-text"><%= simple_format(@dispute.resolution_notes) %></p>
+            </div>
+          </div>
+        <% end %>
+
+        <% if @dispute.pending? || @dispute.under_review? %>
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">Take Action</h5>
+            </div>
+            <div class="card-body">
+              <%= form_with(url: resolve_moderator_dispute_path(@dispute), method: :patch, local: true, class: 'mb-3') do |f| %>
+                <div class="mb-3">
+                  <%= f.label :resolution_notes, "Resolution Notes", class: "form-label" %>
+                  <%= f.text_area :resolution_notes, class: "form-control", rows: 4,
+                      placeholder: "Explain your decision and any actions taken..." %>
+                </div>
+                <div class="d-flex gap-2">
+                  <%= f.submit "Resolve Dispute", class: "btn btn-success",
+                      data: { confirm: "Are you sure you want to mark this dispute as resolved?" } %>
+                  
+                  <%= button_to "Dismiss Dispute", dismiss_moderator_dispute_path(@dispute),
+                      method: :patch,
+                      class: "btn btn-danger",
+                      form: { data: { turbo_confirm: "Are you sure you want to dismiss this dispute?" } } %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h4>Communication History</h4>
+      </div>
+      <div class="card-body">
+        <%= render 'shared/dispute_comments', dispute: @dispute %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h4>Case Information</h4>
+      </div>
+      <div class="card-body">
+        <dl class="row mb-0">
+          <dt class="col-sm-4">Status</dt>
+          <dd class="col-sm-8">
+            <span class="badge bg-<%= {
+              'pending': 'warning',
+              'under_review': 'info',
+              'resolved': 'success',
+              'dismissed': 'danger'
+            }[@dispute.status.to_sym] %>">
+              <%= @dispute.status.titleize %>
+            </span>
+          </dd>
+
+          <dt class="col-sm-4">Created</dt>
+          <dd class="col-sm-8"><%= @dispute.created_at.strftime("%B %d, %Y at %I:%M %p") %></dd>
+
+          <dt class="col-sm-4">Updated</dt>
+          <dd class="col-sm-8"><%= @dispute.updated_at.strftime("%B %d, %Y at %I:%M %p") %></dd>
+
+          <dt class="col-sm-4">Assigned To</dt>
+          <dd class="col-sm-8">
+            <% if @dispute.moderator %>
+              <%= @dispute.moderator.name %>
+            <% else %>
+              <em class="text-muted">Unassigned</em>
+              <%= button_to "Take Case", assign_moderator_dispute_path(@dispute),
+                  method: :patch,
+                  class: "btn btn-sm btn-outline-success mt-1" %>
+            <% end %>
+          </dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header">
+        <h4>Reporter Details</h4>
+      </div>
+      <div class="card-body">
+        <dl class="row mb-0">
+          <dt class="col-sm-4">Name</dt>
+          <dd class="col-sm-8"><%= link_to @dispute.reporter.name, admin_user_path(@dispute.reporter) %></dd>
+
+          <dt class="col-sm-4">Email</dt>
+          <dd class="col-sm-8"><%= @dispute.reporter.email %></dd>
+
+          <dt class="col-sm-4">Member Since</dt>
+          <dd class="col-sm-8"><%= @dispute.reporter.created_at.strftime("%B %d, %Y") %></dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h4>Reported User Details</h4>
+      </div>
+      <div class="card-body">
+        <dl class="row mb-0">
+          <dt class="col-sm-4">Name</dt>
+          <dd class="col-sm-8"><%= link_to @dispute.reported_user.name, admin_user_path(@dispute.reported_user) %></dd>
+
+          <dt class="col-sm-4">Email</dt>
+          <dd class="col-sm-8"><%= @dispute.reported_user.email %></dd>
+
+          <dt class="col-sm-4">Member Since</dt>
+          <dd class="col-sm-8"><%= @dispute.reported_user.created_at.strftime("%B %d, %Y") %></dd>
+
+          <dt class="col-sm-4">Products</dt>
+          <dd class="col-sm-8"><%= @dispute.reported_user.products.count %></dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</div>

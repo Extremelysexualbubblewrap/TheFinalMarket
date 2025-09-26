@@ -1,0 +1,42 @@
+<h1>Seller Application</h1>
+
+<p>
+  <strong>User:</strong>
+  <%= @seller_application.user.username %>
+</p>
+
+<p>
+  <strong>Business Name:</strong>
+  <%= @seller_application.business_name %>
+</p>
+
+<p>
+  <strong>Reason for Selling:</strong>
+  <%= @seller_application.reason_for_selling %>
+</p>
+
+<p>
+  <strong>Website or Social Media:</strong>
+  <%= @seller_application.website_or_social_media %>
+</p>
+
+<p>
+  <strong>Status:</strong>
+  <%= @seller_application.status %>
+</p>
+
+<%= form_with(model: [:admin, @seller_application]) do |form| %>
+  <div class="field">
+    <%= form.label :status %>
+    <%= form.select :status, SellerApplication.statuses.keys %>
+  </div>
+
+  <div class="field">
+    <%= form.label :feedback %>
+    <%= form.text_area :feedback %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit "Update Application" %>
+  </div>
+<% end %>

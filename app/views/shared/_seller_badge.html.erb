@@ -1,0 +1,8 @@
+<% if user.gem? %>
+  <span class="badge bg-primary" title="Verified Seller">
+    <i class="bi bi-gem"></i> Gem
+    <% if user.active? %>
+      <i class="bi bi-check-circle-fill text-success"></i>
+    <% end %>
+  </span>
+<% end %>

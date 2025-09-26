@@ -1,0 +1,127 @@
+.spirit-loader {
+  width: 48px;
+  height: 48px;
+  position: relative;
+}
+
+.spirit-loader:before,
+.spirit-loader:after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--color-spirit-secondary);
+  opacity: 0.7;
+  filter: blur(5px);
+}
+
+.spirit-loader:before {
+  animation: spirit-pulse-grow 2s ease-in-out infinite;
+}
+
+.spirit-loader:after {
+  animation: spirit-pulse-grow 2s ease-in-out infinite 1s;
+}
+
+@keyframes spirit-pulse-grow {
+  0% {
+    transform: scale(0);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0.7;
+  }
+}
+
+/* Decorative Elements */
+.spirit-orb {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, var(--color-spirit-secondary), var(--color-spirit-primary));
+  opacity: 0.1;
+  filter: blur(10px);
+  pointer-events: none;
+}
+
+.spirit-orb-top-right {
+  top: -50px;
+  right: -50px;
+  width: 200px;
+  height: 200px;
+}
+
+.spirit-orb-bottom-left {
+  bottom: -50px;
+  left: -50px;
+  width: 150px;
+  height: 150px;
+}
+
+.spirit-leaves {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234CAF50' opacity='0.1'%3E%3Cpath d='M17,8C8,10,5.9,16.17,3.82,21.34L5.71,22l1-1.73,1.73,1,0.57-1,1.73,1,0.57-1,1.73,1,0.57-1L14,22l1-1.73,1.73,1,0.57-1,1.73,1,0.57-1,1.73,1,0.57-1L24,22l-2-3.46C22,16.37,21,11,17,8z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+.spirit-leaves-top {
+  top: 20px;
+  right: 50px;
+  transform: rotate(45deg);
+}
+
+.spirit-leaves-bottom {
+  bottom: 20px;
+  left: 50px;
+  transform: rotate(-135deg);
+}
+
+/* Flash Messages */
+.spirit-flash {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid;
+  transition: all 0.3s ease;
+}
+
+.spirit-flash::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  animation: spirit-flash-shine 3s infinite;
+}
+
+@keyframes spirit-flash-shine {
+  100% {
+    left: 100%;
+  }
+}
+
+.spirit-flash-success {
+  background: linear-gradient(135deg, var(--color-nature-green), var(--color-spirit-secondary));
+  color: white;
+  border-color: var(--color-nature-green);
+}
+
+.spirit-flash-error {
+  background: linear-gradient(135deg, #ef4444, var(--color-spirit-primary));
+  color: white;
+  border-color: #ef4444;
+}

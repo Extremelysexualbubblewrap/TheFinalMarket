@@ -1,0 +1,81 @@
+<%# app/views/orders/index.html.erb %>
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-2xl font-bold mb-6">My Orders</h1>
+
+  <% if @orders.any? %>
+    <div class="space-y-6">
+      <% @orders.each do |order| %>
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <div class="flex justify-between items-center">
+              <div>
+                <h3 class="text-lg font-medium text-gray-900">
+                  Order #<%= order.id %>
+                </h3>
+                <p class="text-sm text-gray-500">
+                  Placed on <%= order.created_at.strftime("%B %d, %Y") %>
+                </p>
+              </div>
+              <div class="text-right">
+                <p class="text-lg font-bold text-gray-900">
+                  $<%= number_with_precision(order.total_amount, precision: 2) %>
+                </p>
+                <span class="px-3 py-1 text-sm rounded-full
+                  <%= order.status == 'delivered' ? 'bg-green-100 text-green-800' :
+                     order.status == 'cancelled' ? 'bg-red-100 text-red-800' :
+                     'bg-blue-100 text-blue-800' %>">
+                  <%= order.status.titleize %>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="px-6 py-4">
+            <div class="flow-root">
+              <ul role="list" class="-my-6 divide-y divide-gray-200">
+                <% order.order_items.includes(:item).each do |order_item| %>
+                  <li class="py-6 flex">
+                    <% if order_item.item.images.attached? %>
+                      <div class="flex-shrink-0 w-24 h-24 overflow-hidden rounded-md">
+                        <%= image_tag order_item.item.images.first, class: "w-full h-full object-center object-cover" %>
+                      </div>
+                    <% end %>
+                    <div class="ml-4 flex-1 flex flex-col">
+                      <div>
+                        <div class="flex justify-between">
+                          <h4 class="text-sm font-medium text-gray-900">
+                            <%= link_to order_item.item.name, item_path(order_item.item) %>
+                          </h4>
+                          <p class="ml-4 text-sm text-gray-900">
+                            $<%= number_with_precision(order_item.unit_price, precision: 2) %>
+                          </p>
+                        </div>
+                        <p class="mt-1 text-sm text-gray-500">Quantity: <%= order_item.quantity %></p>
+                      </div>
+                      <div class="mt-4 flex justify-between">
+                        <p class="text-sm font-medium text-gray-900">
+                          Subtotal: $<%= number_with_precision(order_item.subtotal, precision: 2) %>
+                        </p>
+                      </div>
+                    </div>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+
+          <div class="px-6 py-4 bg-gray-50">
+            <%= link_to "View Order Details", order_path(order), 
+                class: "text-blue-600 hover:text-blue-800 font-medium" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center py-12">
+      <p class="text-gray-500 text-lg mb-4">You haven't placed any orders yet</p>
+      <%= link_to "Start Shopping", root_path, 
+          class: "inline-block px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700" %>
+    </div>
+  <% end %>
+</div>

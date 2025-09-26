@@ -1,0 +1,101 @@
+<%# app/views/seller/products/index.html.erb %>
+
+<div class="min-h-screen bg-gradient-to-br from-spirit-light to-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex items-center justify-between mb-8">
+      <h1 class="text-3xl font-bold bg-gradient-to-r from-spirit-primary to-spirit-secondary bg-clip-text text-transparent">
+        Your Products
+      </h1>
+      
+      <%= link_to new_seller_product_path, 
+          class: "spirit-button flex items-center space-x-2",
+          data: { turbo_frame: "new_product" } do %>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        <span>Add Product</span>
+      <% end %>
+    </div>
+
+    <div class="spirit-card"
+         data-controller="product-management"
+         data-product-management-reorder-url-value="<%= batch_update_seller_products_path %>">
+      
+      <%# Batch Actions Bar %>
+      <div data-product-management-target="batchActions"
+           class="hidden mb-4 p-4 bg-spirit-light/30 rounded-lg">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <span class="text-spirit-dark">
+              <span class="selected-count">0</span> items selected
+            </span>
+          </div>
+          
+          <div class="flex items-center space-x-4">
+            <button data-action="product-management#updatePrices"
+                    class="spirit-button bg-spirit-primary">
+              Update Prices
+            </button>
+            <button data-action="product-management#updateStock"
+                    class="spirit-button bg-spirit-primary">
+              Update Stock
+            </button>
+            <button data-action="product-management#archiveProducts"
+                    class="spirit-button bg-spirit-primary">
+              Archive
+            </button>
+            <button data-action="category-modal#open"
+                    class="spirit-button bg-spirit-primary">
+              Assign Category
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <%# Category Selection Modal %>
+      <%= render 'category_modal',
+          categories: Category.all,
+          update_url: batch_update_seller_products_path %>
+
+      <%# Products Table %>
+      <table class="min-w-full divide-y divide-spirit-light">
+        <thead>
+          <tr>
+            <th class="px-6 py-3 text-left">
+              <input type="checkbox"
+                     data-product-management-target="selectAll"
+                     data-action="change->product-management#toggleAllSelection"
+                     class="rounded border-spirit-light text-spirit-primary focus:ring-spirit-secondary">
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-spirit-dark uppercase tracking-wider">
+              Product
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-spirit-dark uppercase tracking-wider">
+              Stock
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-spirit-dark uppercase tracking-wider">
+              Price
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-spirit-dark uppercase tracking-wider">
+              Status
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-spirit-dark uppercase tracking-wider">
+              Actions
+            </th>
+          </tr>
+        </thead>
+
+        <tbody data-product-management-target="list" class="bg-white divide-y divide-spirit-light">
+          <%= render @products %>
+        </tbody>
+      </table>
+
+      <div class="p-4">
+        <%= render partial: "shared/pagination", locals: { pagy: @pagy } if @pagy %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# Turbo Frame for New/Edit Product Modal %>
+<%= turbo_frame_tag "new_product" %>

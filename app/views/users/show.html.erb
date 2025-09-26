@@ -1,0 +1,75 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h2 class="card-title"><%= @user.name %> <%= render 'shared/seller_badge', user: @user %></h2>
+          <div class="mb-3">
+            <%= level_badge(@user) %>
+            <% unless @user.level >= 6 %>
+              <div class="level-progress mt-2">
+                <div class="progress" style="height: 20px;">
+                  <div class="progress-bar" role="progressbar" 
+                       style="width: <%= @user.progress_to_next_level %>%;" 
+                       aria-valuenow="<%= @user.progress_to_next_level %>" 
+                       aria-valuemin="0" 
+                       aria-valuemax="100">
+                    <%= @user.progress_to_next_level.round %>%
+                  </div>
+                </div>
+                <small class="text-muted">
+                  <%= @user.points_to_next_level %> points to <%= @user.level < 6 ? level_name(@user.level + 1) : 'max level' %>
+                </small>
+              </div>
+            <% end %>
+          </div>
+          <p class="card-text"><strong>Email:</strong> <%= @user.email %></p>
+          <p class="card-text"><strong>Member since:</strong> <%= @user.created_at.strftime("%B %Y") %></p>
+        </div>
+      </div>
+      
+      <% if @user == current_user && !@user.gem? %>
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Want to become a seller?</h5>
+            <p class="card-text">Apply to become a Gem and start selling your products!</p>
+            <%= link_to "Apply Now", new_seller_application_path, class: "btn btn-primary" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col-md-8">
+      <%= render 'shared/seller_profile' if @user.gem? %>
+
+      <% if @user.gem? && @user.active? %>
+        <div class="products-section card">
+          <div class="card-header">
+            <h3>Products by <%= @user.name %></h3>
+          </div>
+          <div class="card-body">
+            <% if @user.products.any? %>
+              <div class="row">
+                <% @user.products.each do |product| %>
+                  <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                      <% if product.image.attached? %>
+                        <%= image_tag product.image, class: "card-img-top" %>
+                      <% end %>
+                      <div class="card-body">
+                        <h5 class="card-title"><%= link_to product.name, product_path(product) %></h5>
+                        <p class="card-text"><%= number_to_currency(product.price) %></p>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% else %>
+              <p class="text-muted">No products listed yet.</p>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

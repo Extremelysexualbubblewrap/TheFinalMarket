@@ -1,0 +1,109 @@
+<%# app/views/orders/show.html.erb %>
+<div class="container mx-auto px-4 py-8">
+  <div class="mb-6 flex items-center justify-between">
+    <h1 class="text-2xl font-bold">Order #<%= @order.id %></h1>
+    <%= link_to "Back to Orders", orders_path, 
+        class: "text-blue-600 hover:text-blue-800" %>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="md:col-span-2">
+      <div class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h2 class="text-lg font-medium text-gray-900">Order Items</h2>
+        </div>
+
+        <div class="divide-y divide-gray-200">
+          <% @order.order_items.includes(:item).each do |order_item| %>
+            <div class="px-6 py-4">
+              <div class="flex items-center">
+                <% if order_item.item.images.attached? %>
+                  <div class="flex-shrink-0 w-24 h-24 overflow-hidden rounded-md">
+                    <%= image_tag order_item.item.images.first, 
+                        class: "w-full h-full object-center object-cover" %>
+                  </div>
+                <% end %>
+                <div class="ml-4 flex-1">
+                  <div class="flex justify-between">
+                    <div>
+                      <h3 class="text-sm font-medium text-gray-900">
+                        <%= link_to order_item.item.name, item_path(order_item.item) %>
+                      </h3>
+                      <p class="mt-1 text-sm text-gray-500">
+                        Quantity: <%= order_item.quantity %>
+                      </p>
+                      <p class="mt-1 text-sm text-gray-500">
+                        Unit Price: $<%= number_with_precision(order_item.unit_price, precision: 2) %>
+                      </p>
+                    </div>
+                    <p class="text-sm font-medium text-gray-900">
+                      $<%= number_with_precision(order_item.subtotal, precision: 2) %>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="px-6 py-4 bg-gray-50">
+          <div class="flex justify-between text-base font-medium text-gray-900">
+            <p>Total</p>
+            <p>$<%= number_with_precision(@order.total_amount, precision: 2) %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-6">
+      <div class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h2 class="text-lg font-medium text-gray-900">Order Details</h2>
+        </div>
+        <div class="px-6 py-4 space-y-4">
+          <div>
+            <h3 class="text-sm font-medium text-gray-500">Order Status</h3>
+            <p class="mt-1">
+              <span class="px-3 py-1 text-sm rounded-full
+                <%= @order.status == 'delivered' ? 'bg-green-100 text-green-800' :
+                   @order.status == 'cancelled' ? 'bg-red-100 text-red-800' :
+                   'bg-blue-100 text-blue-800' %>">
+                <%= @order.status.titleize %>
+              </span>
+            </p>
+          </div>
+          
+          <div>
+            <h3 class="text-sm font-medium text-gray-500">Order Date</h3>
+            <p class="mt-1 text-sm text-gray-900">
+              <%= @order.created_at.strftime("%B %d, %Y at %I:%M %p") %>
+            </p>
+          </div>
+
+          <% if @order.tracking_number.present? %>
+            <div>
+              <h3 class="text-sm font-medium text-gray-500">Tracking Number</h3>
+              <p class="mt-1 text-sm text-gray-900"><%= @order.tracking_number %></p>
+            </div>
+          <% end %>
+
+          <div>
+            <h3 class="text-sm font-medium text-gray-500">Shipping Address</h3>
+            <p class="mt-1 text-sm text-gray-900 whitespace-pre-line">
+              <%= @order.shipping_address %>
+            </p>
+          </div>
+
+          <% if @order.notes.present? %>
+            <div>
+              <h3 class="text-sm font-medium text-gray-500">Order Notes</h3>
+              <p class="mt-1 text-sm text-gray-900 whitespace-pre-line">
+                <%= @order.notes %>
+              </p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
