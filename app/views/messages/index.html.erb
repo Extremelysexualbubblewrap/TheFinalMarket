@@ -1,0 +1,18 @@
+<!-- app/views/messages/index.html.erb -->
+<% other_user = @conversation.sender == current_user ? @conversation.recipient : @conversation.sender %>
+<h1>Chat with <%= other_user.username %></h1>
+
+<%= turbo_stream_from @conversation %>
+
+<div id="messages" data-controller="scroll">
+  <% @messages.each do |message| %>
+    <%= render 'messages/message', message: message %>
+  <% end %>
+</div>
+
+<%= form_with(model: [@conversation, @message], html: { class: "mt-4" }) do |form| %>
+  <div class="form-group">
+    <%= form.text_area :body, class: "form-control", rows: 2 %>
+  </div>
+  <%= form.submit "Send", class: "btn btn-primary mt-2" %>
+<% end %>

@@ -1,0 +1,30 @@
+<!-- app/views/admin/bonds/show.html.erb -->
+<h1>Bond Details for <%= @bond.user.username %></h1>
+
+<div class="card">
+  <h2>Bond Information</h2>
+  <p><strong>Status:</strong> <%= @bond.status.humanize %></p>
+  <p><strong>Amount:</strong> <%= @bond.amount.format %></p>
+  <p><strong>Paid At:</strong> <%= @bond.paid_at ? l(@bond.paid_at, format: :long) : "N/A" %></p>
+  <p><strong>Forfeited At:</strong> <%= @bond.forfeited_at ? l(@bond.forfeited_at, format: :long) : "N/A" %></p>
+  <p><strong>Returned At:</strong> <%= @bond.returned_at ? l(@bond.returned_at, format: :long) : "N/A" %></p>
+  <% if @bond.forfeiture_reason.present? %>
+    <p><strong>Forfeiture Reason:</strong> <%= @bond.forfeiture_reason %></p>
+  <% end %>
+</div>
+
+<div class="mt-8">
+  <% if @bond.pending? %>
+    <%= button_to "Approve Bond", approve_admin_bond_path(@bond), method: :patch, class: "btn btn-success" %>
+  <% end %>
+
+  <% if @bond.active? %>
+    <%= form_with(model: @bond, url: forfeit_admin_bond_path(@bond), method: :patch) do |form| %>
+      <div class="form-group">
+        <%= form.label :forfeiture_reason %>
+        <%= form.text_area :forfeiture_reason, class: "form-control" %>
+      </div>
+      <%= form.submit "Forfeit Bond", class: "btn btn-danger" %>
+    <% end %>
+  <% end %>
+</div>

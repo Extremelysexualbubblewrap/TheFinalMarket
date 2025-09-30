@@ -4,11 +4,16 @@ class Review < ApplicationRecord
   # Associations
   belongs_to :reviewer, class_name: 'User'
   belongs_to :reviewable, polymorphic: true
+  belongs_to :review_invitation, optional: true
+  belongs_to :order, optional: true
   has_many :helpful_votes, dependent: :destroy
+  has_one :dispute, through: :order
 
   # Validations
   validates :rating, presence: true, inclusion: { in: 1..5 }
   validates :content, presence: true, length: { minimum: 10, maximum: 1000 }
+  validates :pros, length: { maximum: 500 }
+  validates :cons, length: { maximum: 500 }
   validates :reviewer_id, uniqueness: { 
     scope: [:reviewable_type, :reviewable_id],
     message: "can only review once"
@@ -16,6 +21,7 @@ class Review < ApplicationRecord
   validate :cannot_review_own_item
   validate :must_have_purchased_item, if: :item_review?
   validate :must_have_transaction_with_seller, if: :seller_review?
+  validate :ensure_no_dispute_in_progress, if: :review_invitation
 
   # Callbacks
   after_create :update_reviewable_rating
@@ -86,6 +92,12 @@ class Review < ApplicationRecord
     end
   end
 
+  def ensure_no_dispute_in_progress
+    if dispute&.active?
+      errors.add(:base, "cannot review while dispute is active")
+    end
+  end
+
   def calculate_review_points
     base_points = 10
     points = base_points
@@ -93,9 +105,16 @@ class Review < ApplicationRecord
     # Bonus points for detailed reviews
     points += 5 if content.length >= 100
     points += 5 if content.length >= 200
+    points += 3 if pros.present?
+    points += 3 if cons.present?
 
     # Bonus for adding first review
     points += 10 unless Review.exists?(reviewable: reviewable)
+
+    # Time bonus for quick reviews after order completion
+    if order&.completed? && (Time.current - order.completed_at) <= 7.days
+      points += 5
+    end
 
     points
   end

@@ -1,0 +1,14 @@
+How was your purchase?
+
+Hi <%= @user.name %>,
+
+Thank you for your purchase of <%= @item.name %>. We'd love to hear your thoughts about it!
+
+You can write your review here:
+<%= new_review_url(token: @review_invitation.token) %>
+
+Your review will help other shoppers make informed decisions and help sellers improve their service.
+
+This review invitation will expire on <%= @review_invitation.expires_at.strftime("%B %d, %Y") %>.
+
+If you didn't make this purchase on TheFinalMarket, please ignore this email.

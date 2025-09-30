@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  payment_account: one
+  amount: 9.99
+  reason: MyString
+  released_at: 2025-09-27 20:40:36
+
+two:
+  payment_account: two
+  amount: 9.99
+  reason: MyString
+  released_at: 2025-09-27 20:40:36

@@ -1,0 +1,66 @@
+<%= turbo_frame_tag "search_results" do %>
+  <div class="search-container">
+    <%= search_form_for @q, url: search_path, html: { class: "search-form", data: { turbo_frame: "search_results" } } do |f| %>
+      <div class="search-input-group">
+        <%= text_field_tag :search, params[:search], placeholder: "Search products...", class: "search-input" %>
+        
+        <div class="filters-container">
+          <div class="filter-group">
+            <label>Price Range</label>
+            <%= f.number_field :price_gteq, placeholder: "Min Price", class: "filter-input" %>
+            <%= f.number_field :price_lteq, placeholder: "Max Price", class: "filter-input" %>
+          </div>
+
+          <div class="filter-group">
+            <label>Brand</label>
+            <%= f.select :brand_eq, 
+                Product.distinct.pluck(:brand).compact.sort,
+                { include_blank: "All Brands" },
+                class: "filter-select" %>
+          </div>
+
+          <div class="filter-group">
+            <label>Categories</label>
+            <%= f.collection_check_boxes :category_ids_in, Category.all, :id, :name %>
+          </div>
+
+          <div class="filter-group">
+            <label>Tags</label>
+            <%= f.collection_check_boxes :tag_ids_in, Tag.all, :id, :name %>
+          </div>
+
+          <div class="filter-group">
+            <label>Availability</label>
+            <%= f.select :availability_eq,
+                [["In Stock", true], ["Out of Stock", false]],
+                { include_blank: "Any" },
+                class: "filter-select" %>
+          </div>
+
+          <div class="filter-group">
+            <label>Sort By</label>
+            <%= f.sort_select [:name_asc, :name_desc,
+                             :price_asc, :price_desc,
+                             :created_at_desc, :created_at_asc],
+                             class: "filter-select" %>
+          </div>
+        </div>
+
+        <%= f.submit "Apply Filters", class: "filter-submit" %>
+      </div>
+    <% end %>
+
+    <div class="search-results">
+      <% if @products.any? %>
+        <div class="products-grid">
+          <%= render partial: "products/product", collection: @products %>
+        </div>
+        <%= paginate @products %>
+      <% else %>
+        <div class="no-results">
+          <p>No products found matching your criteria.</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

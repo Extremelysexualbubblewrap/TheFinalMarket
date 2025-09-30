@@ -1,0 +1,41 @@
+<!-- app/views/seller/orders/show.html.erb -->
+<h1>Order #<%= @order.id %></h1>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+  <div class="col-span-2">
+    <div class="card">
+      <h2>Order Details</h2>
+      <p><strong>Status:</strong> <%= @order.status.humanize %></p>
+      <p><strong>Buyer:</strong> <%= @order.buyer.username %></p>
+      <p><strong>Total:</strong> <%= @order.total_amount.format %></p>
+      <p><strong>Shipping Address:</strong></p>
+      <address>
+        <%= @order.shipping_address.street %><br>
+        <%= @order.shipping_address.city %>, <%= @order.shipping_address.state %> <%= @order.shipping_address.zip %><br>
+        <%= @order.shipping_address.country %>
+      </address>
+    </div>
+  </div>
+
+  <div>
+    <div class="card">
+      <h2>Shipping Information</h2>
+      <% if @order.pending? %>
+        <%= form_with(model: @order, url: ship_seller_order_path(@order), method: :patch) do |form| %>
+          <div class="form-group">
+            <%= form.label :shipping_carrier %>
+            <%= form.text_field :shipping_carrier, class: "form-control" %>
+          </div>
+          <div class="form-group mt-4">
+            <%= form.label :tracking_number %>
+            <%= form.text_field :tracking_number, class: "form-control" %>
+          </div>
+          <%= form.submit "Mark as Shipped", class: "btn btn-primary mt-4" %>
+        <% end %>
+      <% else %>
+        <p><strong>Shipping Carrier:</strong> <%= @order.shipping_carrier %></p>
+        <p><strong>Tracking Number:</strong> <%= @order.tracking_number %></p>
+      <% end %>
+    </div>
+  </div>
+</div>

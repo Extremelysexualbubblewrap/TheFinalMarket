@@ -1,0 +1,31 @@
+<!-- app/views/admin/disputes/index.html.erb -->
+<h1>Disputes</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Order ID</th>
+      <th>Buyer</th>
+      <th>Seller</th>
+      <th>Status</th>
+      <th>Moderator</th>
+      <th>Created At</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @disputes.each do |dispute| %>
+      <tr>
+        <td><%= link_to dispute.order_id, order_path(dispute.order) %></td>
+        <td><%= link_to dispute.buyer.username, admin_user_path(dispute.buyer) %></td>
+        <td><%= link_to dispute.seller.username, admin_user_path(dispute.seller) %></td>
+        <td><%= dispute.status.humanize %></td>
+        <td><%= dispute.moderator&.username || "Unassigned" %></td>
+        <td><%= l(dispute.created_at, format: :long) %></td>
+        <td><%= link_to "View", admin_dispute_path(dispute), class: "btn btn-sm btn-secondary" %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= paginate @disputes %>

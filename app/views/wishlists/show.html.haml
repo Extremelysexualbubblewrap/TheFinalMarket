@@ -1,0 +1,30 @@
+.wishlist-container
+  %h1.text-2xl.font-bold.mb-6 My Wishlist
+
+  - if @wishlist_items.any?
+    .grid.grid-cols-1.md:grid-cols-2.lg:grid-cols-3.gap-6
+      - @wishlist_items.each do |item|
+        .wishlist-item.border.rounded-lg.overflow-hidden
+          - product = item.product
+          = link_to product_path(product), class: 'block' do
+            - if product.image.attached?
+              = image_tag product.image, class: 'w-full h-48 object-cover'
+            
+            .p-4
+              %h3.font-semibold.text-lg= product.name
+              %p.text-gray-600.mb-2= truncate(product.description, length: 100)
+              .flex.items-center.justify-between
+                .price
+                  %span.font-bold= number_to_currency(product.price)
+                  - if product.variants.any?
+                    %span.text-sm.text-gray-500 (Starting from)
+                
+                = button_to remove_item_wishlist_path(product_id: product), 
+                    method: :delete,
+                    class: 'text-red-600 hover:text-red-800' do
+                  %i.fas.fa-heart
+                  Remove
+  - else
+    .text-center.py-12
+      %p.text-gray-600.mb-4 Your wishlist is empty
+      = link_to 'Browse Products', products_path, class: 'btn btn-primary'

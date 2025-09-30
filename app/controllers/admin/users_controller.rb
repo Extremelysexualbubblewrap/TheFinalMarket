@@ -1,5 +1,5 @@
 class Admin::UsersController < Admin::BaseController
-  before_action :set_user, only: [:show, :update, :toggle_role]
+  before_action :set_user, only: [:show, :update, :toggle_role, :suspend, :warn, :verify_seller]
 
   def index
     @users = User.order(created_at: :desc).page(params[:page])
@@ -27,6 +27,30 @@ class Admin::UsersController < Admin::BaseController
       flash[:danger] = "Invalid role specified"
     end
     redirect_to admin_user_path(@user)
+  end
+
+  def suspend
+    if UserManagementService.new(@user, current_user).suspend(params[:reason])
+      redirect_to admin_user_path(@user), notice: 'User has been suspended.'
+    else
+      redirect_to admin_user_path(@user), alert: 'Failed to suspend user.'
+    end
+  end
+
+  def warn
+    if UserManagementService.new(@user, current_user).warn(params[:reason])
+      redirect_to admin_user_path(@user), notice: 'Warning has been issued to the user.'
+    else
+      redirect_to admin_user_path(@user), alert: 'Failed to issue warning.'
+    end
+  end
+
+  def verify_seller
+    if UserManagementService.new(@user, current_user).verify_seller
+      redirect_to admin_user_path(@user), notice: 'Seller has been verified.'
+    else
+      redirect_to admin_user_path(@user), alert: 'Failed to verify seller.'
+    end
   end
 
   private

@@ -1,0 +1,34 @@
+<%# app/views/disputes/_resolution_form.html.erb %>
+<%= form_with(model: [:resolve, @dispute], local: true, class: "space-y-6") do |f| %>
+  <div class="bg-white shadow sm:rounded-lg">
+    <div class="px-4 py-5 sm:p-6">
+      <div class="mt-2 max-w-xl text-sm text-gray-500">
+        <p>Review the evidence and decide how to resolve this dispute.</p>
+      </div>
+      
+      <div class="mt-5 grid grid-cols-1 gap-6">
+        <div>
+          <%= f.label :resolution_type, class: "block text-sm font-medium text-gray-700" %>
+          <%= f.select :resolution_type, 
+              ['buyer_refund', 'seller_release', 'split_payment'].map { |t| [t.titleize, t] },
+              {}, 
+              class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-spirit-primary focus:ring-spirit-primary sm:text-sm" %>
+        </div>
+
+        <div>
+          <%= f.label :resolution_notes, 'Resolution Notes', class: "block text-sm font-medium text-gray-700" %>
+          <%= f.text_area :resolution_notes, 
+              rows: 4, 
+              placeholder: "Explain your decision...",
+              class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-spirit-primary focus:ring-spirit-primary sm:text-sm" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
+      <%= f.submit "Resolve Dispute", 
+          data: { confirm: "Are you sure? This action cannot be undone." },
+          class: "inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-spirit-primary hover:bg-spirit-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-spirit-primary" %>
+    </div>
+  </div>
+<% end %>

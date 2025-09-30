@@ -1,0 +1,3 @@
+# app/views/product_images/create.turbo_stream.haml
+= turbo_stream.append "thumbnails" do
+  = render partial: "products/thumbnail", locals: { image: @product_image }

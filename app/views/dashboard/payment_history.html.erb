@@ -1,0 +1,25 @@
+<!-- app/views/dashboard/payment_history.html.erb -->
+<h1>Payment History</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Type</th>
+      <th>Amount</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @transactions.each do |transaction| %>
+      <tr>
+        <td><%= l(transaction.created_at, format: :long) %></td>
+        <td><%= transaction.transaction_type.humanize %></td>
+        <td><%= transaction.amount.format %></td>
+        <td><%= transaction.status %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= paginate @transactions %>

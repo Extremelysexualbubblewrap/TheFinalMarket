@@ -1,0 +1,72 @@
+.product-gallery.mt-6
+  - if @product.product_images.any?
+    .grid.grid-cols-1.gap-4{ data: { controller: "swipe gallery" } }
+      #main-image.aspect-w-4.aspect-h-3.bg-gray-100.rounded-lg.overflow-hidden.relative
+        = image_tag @product.product_images.find_by(is_primary: true)&.image || @product.product_images.first.image,
+            class: "w-full h-full object-contain transition-opacity duration-150",
+            data: { gallery_target: "mainImage" }
+            
+        - if @product.product_images.length > 1
+          .gallery-controls.absolute.inset-x-0.bottom-0.flex.justify-between.p-4.md:hidden{ role: "navigation", "aria-label": "Image gallery navigation" }
+            %button.prev-image.p-2.rounded-full.bg-black.bg-opacity-50.text-white{
+              data: { action: "gallery#previousImage" },
+              "aria-label": "Previous image",
+              title: "Previous image (Left arrow key)"
+            }
+              %i.fas.fa-chevron-left
+            %button.next-image.p-2.rounded-full.bg-black.bg-opacity-50.text-white{
+              data: { action: "gallery#nextImage" },
+              "aria-label": "Next image",
+              title: "Next image (Right arrow key)"
+            }
+              %i.fas.fa-chevron-right
+
+      #thumbnails.grid.grid-cols-5.gap-2.hidden.md:grid{ 
+        data: { 
+          controller: "sortable", 
+          sortable_url_value: product_path(@product)
+        }
+      }
+        - @product.product_images.each_with_index do |image, index|
+          .thumbnail{
+            id: dom_id(image),
+            class: "aspect-square rounded-lg overflow-hidden cursor-pointer border-2 transition-all #{image.is_primary? ? 'border-primary' : 'border-transparent'}",
+            data: { 
+              action: "click->gallery#showImage",
+              gallery_target: "thumbnail",
+              image_url: url_for(image.image)
+            }
+          }
+            = image_tag image.thumbnail, class: "w-full h-full object-cover"
+            
+            - if current_user == @product.user
+              .thumbnail-actions.absolute.top-0.right-0.p-1.opacity-0.group-hover:opacity-100.transition-opacity
+                = button_to make_primary_product_product_image_path(@product, image),
+                    method: :patch,
+                    class: "text-xs bg-blue-500 text-white rounded px-2 py-1 mb-1 #{image.is_primary? ? 'hidden' : ''}" do
+                  Make Primary
+                
+                = button_to product_product_image_path(@product, image),
+                    method: :delete,
+                    class: "text-xs bg-red-500 text-white rounded px-2 py-1",
+                    data: { confirm: "Are you sure?" } do
+                  Remove
+
+  - if current_user == @product.user
+    .mt-4
+      = form_with(model: [@product, ProductImage.new], local: true, class: "space-y-4") do |f|
+        .field
+          = f.label :image, class: "block text-sm font-medium text-gray-700"
+          = f.file_field :image, 
+              class: "mt-1 block w-full",
+              direct_upload: true,
+              accept: "image/jpeg,image/png,image/webp"
+        
+        .field
+          = f.label :alt_text, "Alt Text", class: "block text-sm font-medium text-gray-700"
+          = f.text_field :alt_text, 
+              class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm",
+              placeholder: "Describe the image for accessibility"
+        
+        .actions
+          = f.submit "Add Image", class: "btn btn-primary"

@@ -1,0 +1,14 @@
+<!-- app/views/conversations/index.html.erb -->
+<h1>Inbox</h1>
+
+<div class="conversations">
+  <% @conversations.each do |conversation| %>
+    <%= link_to conversation_messages_path(conversation) do %>
+      <div class="conversation">
+        <% other_user = conversation.sender == current_user ? conversation.recipient : conversation.sender %>
+        <p><strong><%= other_user.username %></strong></p>
+        <p><%= conversation.messages.last&.body %></p>
+      </div>
+    <% end %>
+  <% end %>
+</div>

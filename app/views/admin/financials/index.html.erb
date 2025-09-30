@@ -1,0 +1,29 @@
+<!-- app/views/admin/financials/index.html.erb -->
+<h1>Platform Financials</h1>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+  <div class="card">
+    <h2>Total Revenue</h2>
+    <p><%= @financials.total_revenue %></p>
+  </div>
+  <div class="card">
+    <h2>Fees Collected</h2>
+    <p><%= @financials.fees_collected %></p>
+  </div>
+  <div class="card">
+    <h2>Total Volume</h2>
+    <p><%= @financials.total_volume %></p>
+  </div>
+  <div class="card">
+    <h2>Successful Transactions</h2>
+    <p><%= @financials.successful_transactions %></p>
+  </div>
+  <div class="card">
+    <h2>Pending Escrow</h2>
+    <p><%= @financials.pending_escrow %></p>
+  </div>
+  <div class="card">
+    <h2>Active Bonds</h2>
+    <p><%= @financials.active_bonds %></p>
+  </div>
+</div>

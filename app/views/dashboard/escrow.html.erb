@@ -1,0 +1,27 @@
+<!-- app/views/dashboard/escrow.html.erb -->
+<h1>Escrow Transactions</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Order</th>
+      <th>Amount</th>
+      <th>Status</th>
+      <th>Release At</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @escrow_transactions.each do |transaction| %>
+      <tr>
+        <td><%= l(transaction.created_at, format: :long) %></td>
+        <td><%= link_to transaction.order_id, order_path(transaction.order) %></td>
+        <td><%= transaction.amount.format %></td>
+        <td><%= transaction.status %></td>
+        <td><%= l(transaction.release_at, format: :long) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= paginate @escrow_transactions %>

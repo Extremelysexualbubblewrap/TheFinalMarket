@@ -1,0 +1,33 @@
+<div class="space-y-2 p-2">
+  <% conversations.each do |conversation| %>
+    <%= link_to conversation_path(conversation),
+                class: "block p-4 hover:bg-gray-50 rounded-lg transition duration-150 #{conversation == @conversation ? 'bg-gray-100' : ''}" do %>
+      <div class="flex items-center space-x-4">
+        <%= render partial: "users/avatar", locals: { user: conversation.other_participant(current_user), size: "sm" } %>
+        
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between">
+            <p class="text-sm font-medium text-gray-900 truncate">
+              <%= conversation.other_participant(current_user).name %>
+            </p>
+            <p class="text-xs text-gray-500">
+              <%= time_ago_in_words(conversation.last_message_at) if conversation.last_message_at %>
+            </p>
+          </div>
+          
+          <div class="flex items-center justify-between mt-1">
+            <p class="text-sm text-gray-500 truncate">
+              <%= conversation.last_message %>
+            </p>
+            
+            <% if conversation.unread_count > 0 %>
+              <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-blue-500 rounded-full">
+                <%= conversation.unread_count %>
+              </span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+</div>

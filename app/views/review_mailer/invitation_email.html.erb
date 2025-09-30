@@ -1,0 +1,43 @@
+<%# app/views/review_mailer/invitation_email.html.erb %>
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <h2 style="color: #2d3748; margin-bottom: 20px;">How was your purchase?</h2>
+  
+  <p style="color: #4a5568; line-height: 1.5;">
+    Hi <%= @user.name %>,
+  </p>
+  
+  <p style="color: #4a5568; line-height: 1.5;">
+    Thank you for your purchase of <%= @item.name %>. We'd love to hear your thoughts about it!
+  </p>
+
+  <div style="margin: 30px 0; text-align: center;">
+    <%= link_to "Write Your Review", new_review_url(token: @review_invitation.token),
+        style: "display: inline-block; padding: 12px 24px; background-color: #4f46e5; color: white;
+                text-decoration: none; border-radius: 6px; font-weight: bold;" %>
+  </div>
+
+  <p style="color: #4a5568; line-height: 1.5;">
+    Your review will help other shoppers make informed decisions and help sellers improve their service.
+  </p>
+
+  <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #718096; font-size: 14px;">
+    <p>This review invitation will expire on <%= @review_invitation.expires_at.strftime("%B %d, %Y") %>.</p>
+    <p>If you didn't make this purchase on TheFinalMarket, please ignore this email.</p>
+  </div>
+</div>
+
+<%# app/views/review_mailer/invitation_email.text.erb %>
+How was your purchase?
+
+Hi <%= @user.name %>,
+
+Thank you for your purchase of <%= @item.name %>. We'd love to hear your thoughts about it!
+
+You can write your review here:
+<%= new_review_url(token: @review_invitation.token) %>
+
+Your review will help other shoppers make informed decisions and help sellers improve their service.
+
+This review invitation will expire on <%= @review_invitation.expires_at.strftime("%B %d, %Y") %>.
+
+If you didn't make this purchase on TheFinalMarket, please ignore this email.

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>You are Offline - TheFinalMarket</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    .offline-container {
+      text-align: center;
+      padding: 2rem;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    .offline-icon {
+      width: 128px;
+      height: 128px;
+      margin: 2rem auto;
+    }
+
+    .offline-title {
+      color: #6B4FA9;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .offline-message {
+      color: #666;
+      margin-bottom: 2rem;
+    }
+
+    .offline-button {
+      background: #6B4FA9;
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .offline-button:hover {
+      background: #563D87;
+    }
+
+    .cached-content {
+      margin-top: 3rem;
+      padding: 1rem;
+      background: #f5f5f5;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="offline-container">
+    <div class="offline-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#6B4FA9" stroke-width="2">
+        <path d="M1 1L23 23M16.72 11.06C17.54 11.42 18.29 11.93 18.94 12.57C19.59 13.22 20.1 13.97 20.46 14.79M5 12.55C6.48 10.52 8.82 9 12 9M8.53 8.53C7.05 10.01 6.04 11.9 5.68 14M19.07 4.93C16.26 2.12 11.88 1.88 8.89 4.22M1.42 17.77C2.85 16.34 4.8 15.5 7 15.5C9.2 15.5 11.15 16.34 12.58 17.77L11.06 19.29C9.94 18.17 8.52 17.5 7 17.5C5.48 17.5 4.06 18.17 2.94 19.29L1.42 17.77Z"/>
+      </svg>
+    </div>
+    <h1 class="offline-title">You're Offline</h1>
+    <p class="offline-message">
+      Please check your internet connection and try again.
+      Some features may be available offline.
+    </p>
+    <button class="offline-button" onclick="window.location.reload()">
+      Try Again
+    </button>
+
+    <div class="cached-content">
+      <h2>Available Offline</h2>
+      <div id="cached-items">
+        <!-- Dynamically populated by service worker -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Check for cached content
+    if ('caches' in window) {
+      caches.match('/api/offline-content')
+        .then(response => response ? response.json() : [])
+        .then(items => {
+          const container = document.getElementById('cached-items');
+          if (items.length) {
+            items.forEach(item => {
+              container.innerHTML += `
+                <div class="cached-item">
+                  <h3>${item.title}</h3>
+                  <p>${item.description}</p>
+                </div>
+              `;
+            });
+          } else {
+            container.innerHTML = '<p>No cached content available</p>';
+          }
+        });
+    }
+  </script>
+</body>
+</html>

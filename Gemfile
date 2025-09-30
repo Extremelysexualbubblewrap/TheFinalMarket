@@ -15,14 +15,10 @@ gem "importmap-rails"
 gem "turbo-rails"
 # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
 gem "stimulus-rails"
-# Build JSON APIs with ease [https://github.com/rails/jbuilder]
-gem "jbuilder"
-gem "dartsass-rails"
-
-# Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
-gem "bcrypt", "~> 3.1.7"
+gem "ransack"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
+# For other platforms, this gem is optional.
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
 # Use the database-backed adapters for Rails.cache, Active Job, and Action Cable
@@ -63,35 +59,46 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
-gem 'pundit'
+
+# Authorization
+gem 'pundit', '~> 2.3'
 
 # View components for reusable UI elements
-gem 'view_component'
+gem 'view_component', '~> 3.10'
+
+# PWA and offline support
+gem 'web-push', '~> 3.0'
+gem 'redis', '~> 5.0'
 
 # Better form handling with Turbo
 gem 'turbo_boost-streams'
 
 # For nested forms and dynamic form handling
-gem 'cocoon'
+gem 'cocoon', '~> 1.2'
 
 # For better enum handling
-gem 'enumerize'
-
-# For authorization
-gem 'pundit'
-
-# For better searching
-gem 'ransack'
+gem 'enumerize', '~> 2.7'
 
 # For handling money
-gem 'money-rails'
+gem 'money-rails', '~> 1.15'
 
 # For pagination
-gem 'pagy'
+gem 'pagy', '~> 6.2'
 
 # For scheduling recurring jobs
-gem 'whenever', require: false
+gem 'whenever', '~> 1.0', require: false
 
-# For charts
-gem 'chartkick'
-gem 'groupdate'
+# Payment processing
+gem 'square.rb', '~> 42.0'  # Square's official Ruby SDK
+gem 'jwt', '~> 2.7'         # For webhook verification
+
+# For secure key management
+gem 'encrypted_strings', '~> 0.3'
+
+# For background job processing with retries
+gem 'sidekiq', '~> 7.2'
+gem 'sidekiq-cron', '~> 1.10'
+gem "dartsass-rails", "~> 0.5.1"
+
+gem "elasticsearch-model", "~> 8.0"
+gem "elasticsearch-rails", "~> 8.0"

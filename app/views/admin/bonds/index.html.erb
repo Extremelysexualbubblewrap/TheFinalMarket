@@ -1,0 +1,27 @@
+<!-- app/views/admin/bonds/index.html.erb -->
+<h1>Seller Bonds</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Seller</th>
+      <th>Amount</th>
+      <th>Status</th>
+      <th>Paid At</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @bonds.each do |bond| %>
+      <tr>
+        <td><%= link_to bond.user.username, admin_user_path(bond.user) %></td>
+        <td><%= bond.amount.format %></td>
+        <td><%= bond.status.humanize %></td>
+        <td><%= bond.paid_at ? l(bond.paid_at, format: :long) : "N/A" %></td>
+        <td><%= link_to "View", admin_bond_path(bond), class: "btn btn-sm btn-secondary" %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= paginate @bonds %>

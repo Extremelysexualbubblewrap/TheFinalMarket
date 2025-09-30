@@ -1,0 +1,30 @@
+.variants-section.mt-8
+  .flex.items-center.justify-between.mb-4
+    %h3.text-xl.font-semibold Product Variants
+    - if current_user == @product.user
+      = link_to 'Add Variant', new_product_variant_path(@product), class: 'btn btn-primary'
+
+  .grid.grid-cols-1.md:grid-cols-2.lg:grid-cols-3.gap-4
+    - @product.variants.includes(:option_values).each do |variant|
+      .variant-card.border.rounded-lg.p-4
+        - if variant.image.attached?
+          = image_tag variant.image, class: 'w-full h-48 object-cover mb-4 rounded'
+        
+        .variant-details
+          %h4.font-semibold= variant.name
+          %p.text-gray-600.mb-2= number_to_currency(variant.price)
+          %p.text-sm
+            %span.font-medium SKU:
+            = variant.sku
+          %p.text-sm
+            %span.font-medium Stock:
+            = variant.stock_quantity
+        
+        - if current_user == @product.user
+          .flex.gap-2.mt-4
+            = link_to 'Edit', edit_product_variant_path(@product, variant), class: 'btn btn-sm btn-secondary'
+            = button_to 'Delete', 
+                product_variant_path(@product, variant),
+                method: :delete,
+                class: 'btn btn-sm btn-danger',
+                data: { confirm: 'Are you sure?' }

@@ -1,0 +1,15 @@
+.wishlist-button{id: "wishlist_button_#{product.id}"}
+  - if user_signed_in? && current_user.wishlist&.has_product?(product)
+    = button_to remove_item_wishlist_path(product_id: product),
+        method: :delete,
+        class: 'text-red-600 hover:text-red-800',
+        data: { turbo_stream: true } do
+      %i.fas.fa-heart
+      Remove from Wishlist
+  - else
+    = button_to add_item_wishlist_path(product_id: product),
+        method: :post,
+        class: 'text-gray-600 hover:text-red-600',
+        data: { turbo_stream: true } do
+      %i.far.fa-heart
+      Add to Wishlist

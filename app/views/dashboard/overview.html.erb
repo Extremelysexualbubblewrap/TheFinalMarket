@@ -1,0 +1,31 @@
+<!-- app/views/dashboard/overview.html.erb -->
+<h1>Seller Dashboard</h1>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+  <div class="card">
+    <h2>Total Earnings</h2>
+    <p><%= @dashboard.total_earnings %></p>
+  </div>
+  <div class="card">
+    <h2>Pending Payouts</h2>
+    <p><%= @dashboard.pending_payouts %></p>
+  </div>
+  <div class="card">
+    <h2>Recent Sales (30 days)</h2>
+    <p><%= @dashboard.recent_sales %></p>
+  </div>
+  <div class="card">
+    <h2>Bond Status</h2>
+    <p><%= @dashboard.bond_status_display %></p>
+  </div>
+  <div class="card">
+    <h2>Bond Amount</h2>
+    <p><%= @dashboard.bond_amount %></p>
+  </div>
+</div>
+
+<div class="mt-8">
+  <%= link_to "View Payment History", dashboard_payment_history_path, class: "btn btn-primary" %>
+  <%= link_to "View Escrow Transactions", dashboard_escrow_path, class: "btn btn-secondary" %>
+  <%= link_to "Manage Bond", dashboard_bond_path, class: "btn btn-info" %>
+</div>

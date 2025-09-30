@@ -1,0 +1,11 @@
+.tags-container
+  %h1.text-2xl.font-bold.mb-6 Browse by Tags
+
+  .grid.grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-4
+    - @tags.each do |tag|
+      = link_to tag_path(tag), class: 'p-4 border rounded-lg hover:bg-gray-50 transition-colors' do
+        %h3.font-semibold= tag.name
+        .text-sm.text-gray-600
+          = pluralize(tag.products_count, 'product')
+        - if tag.description.present?
+          %p.text-sm.text-gray-500.mt-2= truncate(tag.description, length: 100)

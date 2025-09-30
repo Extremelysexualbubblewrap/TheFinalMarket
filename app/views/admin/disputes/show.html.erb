@@ -1,0 +1,61 @@
+<!-- app/views/admin/disputes/show.html.erb -->
+<h1>Dispute for Order #<%= @dispute.order_id %></h1>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+  <div class="col-span-2">
+    <div class="card">
+      <h2>Dispute Details</h2>
+      <p><strong>Status:</strong> <%= @dispute.status.humanize %></p>
+      <p><strong>Moderator:</strong> <%= @dispute.moderator&.username || "Unassigned" %></p>
+      <p><strong>Buyer:</strong> <%= @dispute.buyer.username %></p>
+      <p><strong>Seller:</strong> <%= @dispute.seller.username %></p>
+    </div>
+
+    <div class="card mt-4">
+      <h2>Comments</h2>
+      <% @dispute_comments.each do |comment| %>
+        <div class="comment">
+          <p><strong><%= comment.user.username %></strong> (<%= l(comment.created_at, format: :short) %>)</p>
+          <p><%= comment.body %></p>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="card mt-4">
+      <h2>Post a Comment</h2>
+      <%= form_with(model: @dispute, url: post_comment_admin_dispute_path(@dispute), method: :post) do |form| %>
+        <div class="form-group">
+          <%= form.text_area :body, class: "form-control", rows: 4 %>
+        </div>
+        <%= form.submit "Post Comment", class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+
+  <div>
+    <div class="card">
+      <h2>Actions</h2>
+      <% if @dispute.pending? || @dispute.under_review? %>
+        <div class="form-group">
+          <%= form_with(url: assign_moderator_admin_dispute_path(@dispute), method: :patch) do |form| %>
+            <%= form.label :moderator_id %>
+            <%= form.collection_select :moderator_id, User.moderator, :id, :username, {}, { class: "form-control" } %>
+            <%= form.submit "Assign Moderator", class: "btn btn-secondary mt-2" %>
+          <% end %>
+        </div>
+
+        <hr class="my-4">
+
+        <div>
+          <%= form_with(url: resolve_admin_dispute_path(@dispute), method: :patch) do |form| %>
+            <%= form.label :resolution %>
+            <%= form.select :resolution, options_for_select([['Refund Buyer', 'refund_buyer'], ['Release to Seller', 'release_to_seller']]), {}, { class: "form-control" } %>
+            <%= form.submit "Resolve Dispute", class: "btn btn-success mt-2", data: { confirm: "Are you sure you want to resolve this dispute?" } %>
+          <% end %>
+        </div>
+      <% else %>
+        <p>This dispute has been resolved.</p>
+      <% end %>
+    </div>
+  </div>
+</div>

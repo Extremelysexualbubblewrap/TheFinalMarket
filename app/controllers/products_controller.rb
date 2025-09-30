@@ -1,17 +1,71 @@
 class ProductsController < ApplicationController
+  include AbTestable
+  
   before_action :authenticate_user!, except: [:index, :show]
   before_action :set_product, only: [:show, :edit, :update, :destroy]
   before_action :ensure_owner, only: [:edit, :update, :destroy]
 
   def index
-    if params[:query].present?
-      @products = Product.where("name ILIKE ? OR description ILIKE ?", "%#{params[:query]}%", "%#{params[:query]}%").order(created_at: :desc)
-    else
-      @products = Product.all.order(created_at: :desc)
+    @categories = Category.all
+    @tags = Tag.all
+    @search_params = search_params
+    
+    # A/B test the product listing layout
+    @grid_layout = ab_test(
+      "product_grid_layout",
+      "standard",
+      "compact",
+      "gallery"
+    )
+    
+    # A/B test the sorting options
+    @default_sort = ab_test(
+      "product_default_sort",
+      "newest",
+      "popular",
+      "price_asc"
+    )
+    
+    @products = ProductSearch.new(@search_params.merge(sort: @default_sort)).search
+    @products = @products.page(params[:page]).per(12)
+
+    respond_to do |format|
+      format.html
+      format.turbo_stream if turbo_frame_request?
     end
   end
 
   def show
+    # A/B test the product page layout
+    @layout_variant = ab_test(
+      "product_page_layout",
+      "standard",
+      "immersive",
+      "minimal"
+    )
+    
+    # A/B test pricing display
+    @price_display = ab_test(
+      "product_price_display",
+      "standard",
+      "with_savings",
+      "with_comparison"
+    )
+
+    if user_signed_in?
+      product_view = current_user.product_views.find_or_initialize_by(product: @product)
+      product_view.view_count += 1
+      product_view.last_viewed_at = Time.current
+      product_view.save
+    end
+
+    @similar_products = RecommendationService.new(current_user)
+                         .similar_products(@product)
+                         .limit(6)
+
+    # Track view for A/B test
+    ab_finished("product_page_layout", "viewed")
+    ab_finished("product_price_display", "viewed")
   end
 
   def new
@@ -48,6 +102,13 @@ class ProductsController < ApplicationController
 
   def set_product
     @product = Product.find(params[:id])
+  end
+
+  def search_params
+    params.permit(
+      :query, :category_id, :min_price, :max_price, 
+      :min_rating, :in_stock, :sort_by, tag_ids: []
+    )
   end
 
   def product_params

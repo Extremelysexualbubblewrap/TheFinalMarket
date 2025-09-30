@@ -1,0 +1,3 @@
+# app/views/product_images/make_primary.turbo_stream.haml
+= turbo_stream.replace "image-gallery" do
+  = render "products/image_gallery", product: @product_image.product

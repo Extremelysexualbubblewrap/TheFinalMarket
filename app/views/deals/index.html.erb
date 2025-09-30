@@ -1,0 +1,120 @@
+<%# app/views/deals/index.html.erb %>
+<div class="min-h-screen bg-gradient-to-br from-spirit-light to-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-3xl font-bold bg-gradient-to-r from-spirit-primary to-spirit-secondary bg-clip-text text-transparent mb-8">
+      Personalized Deals for You
+    </h1>
+
+    <%# Flash Sales Section %>
+    <% if @flash_sales.any? %>
+      <section class="mb-12">
+        <h2 class="text-2xl font-bold text-spirit-dark mb-4">Flash Sales</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <% @flash_sales.each do |sale| %>
+            <%= render 'shared/flash_sale_card', sale: sale %>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+
+    <%# Recommended Deals Section %>
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold text-spirit-dark mb-4">Recommended for You</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <% @recommended_deals.each do |product| %>
+          <%= render 'shared/product_card', 
+                      product: product,
+                      show_discount: true,
+                      personalized: true %>
+        <% end %>
+      </div>
+    </section>
+
+    <%# Trending Category Deals %>
+    <% @trending_deals.each do |category_data| %>
+      <% if category_data[:products].any? %>
+        <section class="mb-12">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-bold text-spirit-dark">
+              Trending in <%= category_data[:category].name %>
+            </h2>
+            <%= link_to category_deals_path(category_data[:category]),
+                class: "text-spirit-primary hover:text-spirit-secondary transition-colors" do %>
+              View All
+              <i class="fas fa-arrow-right ml-2"></i>
+            <% end %>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <% category_data[:products].each do |product| %>
+              <%= render 'shared/product_card', 
+                          product: product,
+                          show_discount: true,
+                          highlight_trending: true %>
+            <% end %>
+          </div>
+        </section>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%# PWA Install Prompt %>
+  <div id="pwa-install-prompt" 
+       class="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-white rounded-lg shadow-xl p-4 transform translate-y-full opacity-0 transition-all duration-300"
+       data-controller="pwa-install">
+    <div class="flex items-start justify-between">
+      <div class="flex-1">
+        <h3 class="font-bold text-gray-900">Install TheFinalMarket</h3>
+        <p class="text-sm text-gray-600 mt-1">
+          Install our app for a better experience and instant access to the best deals!
+        </p>
+      </div>
+      <button class="text-gray-400 hover:text-gray-500"
+              data-action="pwa-install#close">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="mt-4 flex space-x-3">
+      <button class="flex-1 bg-spirit-primary text-white px-4 py-2 rounded-lg hover:bg-spirit-secondary transition-colors"
+              data-action="pwa-install#install">
+        Install App
+      </button>
+      <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              data-action="pwa-install#close">
+        Maybe Later
+      </button>
+    </div>
+  </div>
+</div>
+
+<%# Push Notification Permission Prompt %>
+<% if user_signed_in? && !current_user.push_enabled? %>
+  <div id="push-permission-prompt"
+       class="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-white rounded-lg shadow-xl p-4 transform translate-y-full opacity-0 transition-all duration-300"
+       data-controller="push-notifications">
+    <div class="flex items-start justify-between">
+      <div class="flex-1">
+        <h3 class="font-bold text-gray-900">Stay Updated!</h3>
+        <p class="text-sm text-gray-600 mt-1">
+          Enable notifications to get instant updates about deals, orders, and more!
+        </p>
+      </div>
+      <button class="text-gray-400 hover:text-gray-500"
+              data-action="push-notifications#close">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="mt-4 flex space-x-3">
+      <button class="flex-1 bg-spirit-primary text-white px-4 py-2 rounded-lg hover:bg-spirit-secondary transition-colors"
+              data-action="push-notifications#requestPermission">
+        Enable Notifications
+      </button>
+      <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              data-action="push-notifications#close">
+        Not Now
+      </button>
+    </div>
+  </div>
+<% end %>

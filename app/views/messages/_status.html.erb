@@ -1,0 +1,12 @@
+<span class="text-xs">
+  <% case message.status %>
+  <% when 'sent' %>
+    <i class="fas fa-check text-gray-400"></i>
+  <% when 'delivered' %>
+    <i class="fas fa-check-double text-gray-400"></i>
+  <% when 'read' %>
+    <i class="fas fa-check-double text-blue-500"></i>
+  <% when 'failed' %>
+    <i class="fas fa-exclamation-circle text-red-500"></i>
+  <% end %>
+</span>

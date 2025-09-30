@@ -1,8 +1,13 @@
 class User < ApplicationRecord
   include UserReputation
   include UserLeveling
+  include SellerFeesConcern
+  include SellerBondConcern
+
+  has_many :seller_orders, class_name: 'Order', foreign_key: 'seller_id'
 
   has_secure_password
+  has_one :wishlist, dependent: :destroy
 
   enum role: { user: 0, moderator: 1, admin: 2 }
   enum user_type: { seeker: 'seeker', gem: 'gem' }

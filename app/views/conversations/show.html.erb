@@ -1,0 +1,93 @@
+<%= turbo_frame_tag "chat" do %>
+  <div class="flex h-screen bg-gray-100">
+    <!-- Conversation List -->
+    <div class="w-1/4 bg-white border-r border-gray-200">
+      <div class="p-4 border-b border-gray-200">
+        <h2 class="text-xl font-semibold text-gray-800">Messages</h2>
+      </div>
+      
+      <div class="overflow-y-auto h-[calc(100vh-70px)]">
+        <%= render partial: "conversations/conversation_list", locals: { conversations: @conversations } %>
+      </div>
+    </div>
+
+    <!-- Chat Window -->
+    <div class="flex-1 flex flex-col">
+      <% if @conversation %>
+        <!-- Chat Header -->
+        <div class="p-4 bg-white border-b border-gray-200 flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <%= render partial: "users/avatar", locals: { user: @conversation.other_participant(current_user), size: "md" } %>
+            <div>
+              <h3 class="text-lg font-semibold"><%= @conversation.other_participant(current_user).name %></h3>
+              <%= render partial: "conversations/status", locals: { user: @conversation.other_participant(current_user) } %>
+            </div>
+          </div>
+          
+          <div class="flex items-center space-x-4">
+            <%= link_to archive_conversation_path(@conversation), 
+                        class: "text-gray-500 hover:text-gray-700",
+                        data: { turbo_method: :patch } do %>
+              <i class="fas fa-archive"></i>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Messages -->
+        <div class="flex-1 overflow-y-auto bg-gray-50 p-4" data-controller="scroll">
+          <%= render partial: "messages/message_list", locals: { messages: @conversation.messages } %>
+          <div id="typing_indicators">
+            <!-- Typing indicators will be inserted here -->
+          </div>
+        </div>
+
+        <!-- Message Input -->
+        <div class="p-4 bg-white border-t border-gray-200">
+          <%= form_with(model: [@conversation, Message.new], 
+                        class: "flex items-center space-x-4",
+                        data: { controller: "message-form",
+                               action: "turbo:submit-end->message-form#clear" }) do |f| %>
+            
+            <div class="flex-1 relative">
+              <%= f.text_area :body, 
+                            rows: 1,
+                            class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+                            placeholder: "Type your message...",
+                            data: { 
+                              controller: "textarea-autogrow",
+                              action: "keydown->message-form#onKeydown input->message-form#onInput"
+                            } %>
+            </div>
+
+            <div class="flex items-center space-x-2">
+              <%= f.file_field :files, 
+                             multiple: true,
+                             accept: "image/*,application/pdf",
+                             class: "hidden",
+                             data: { message_form_target: "fileInput" } %>
+              
+              <button type="button" 
+                      class="p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100"
+                      data-action="click->message-form#openFilePicker">
+                <i class="fas fa-paperclip"></i>
+              </button>
+
+              <%= f.button type: :submit,
+                          class: "p-2 text-white bg-blue-500 rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
+                          data: { message_form_target: "submit" } do %>
+                <i class="fas fa-paper-plane"></i>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="flex-1 flex items-center justify-center bg-gray-50">
+          <div class="text-center text-gray-500">
+            <i class="fas fa-comments text-4xl mb-4"></i>
+            <p>Select a conversation to start messaging</p>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

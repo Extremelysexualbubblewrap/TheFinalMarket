@@ -1,0 +1,48 @@
+.product-page.immersive
+  .hero-section.relative.h-screen
+    = image_tag @product.product_images.first&.image, class: "w-full h-full object-cover"
+    .absolute.inset-0.bg-gradient-to-t.from-black.to-transparent
+    .absolute.bottom-0.left-0.right-0.p-8.text-white
+      %h1.text-4xl.font-bold.mb-4= @product.name
+      .flex.items-center.gap-4
+        .price.text-3xl
+          - case @price_display
+          - when "standard"
+            = number_to_currency(@product.price)
+          - when "with_savings"
+            .flex.items-center.gap-2
+              = number_to_currency(@product.price)
+              - if @product.compare_at_price.present?
+                .text-xl.line-through.text-gray-400= number_to_currency(@product.compare_at_price)
+                .text-green-400= "Save #{number_to_percentage(100 - (@product.price / @product.compare_at_price * 100), precision: 0)}"
+          - when "with_comparison"
+            .flex.flex-col
+              = number_to_currency(@product.price)
+              .text-sm= "#{number_to_currency(@product.price_per_unit)} / #{@product.unit}"
+
+      .flex.gap-4.mt-6
+        = button_to add_to_cart_product_path(@product), class: "btn-primary text-xl px-8 py-4" do
+          Add to Cart
+        = button_to wishlist_add_item_path(product_id: @product), class: "btn-secondary text-xl px-8 py-4" do
+          Save for Later
+
+  .product-details.max-w-7xl.mx-auto.px-4.py-16
+    .grid.grid-cols-1.lg:grid-cols-2.gap-16
+      .product-info
+        .description.prose.prose-lg= @product.description
+        .specifications.mt-8
+          %h3.text-2xl.font-bold.mb-4 Specifications
+          = render "products/specifications", product: @product
+
+      .product-media
+        .sticky.top-4
+          - if @product.product_images.count > 1
+            .grid.grid-cols-2.gap-4
+              - @product.product_images.each do |image|
+                = image_tag image.image, class: "rounded-lg shadow-lg"
+
+  .related-products.bg-gray-50.py-16
+    .max-w-7xl.mx-auto.px-4
+      %h2.text-3xl.font-bold.mb-8 You Might Also Like
+      .grid.grid-cols-1.md:grid-cols-3.lg:grid-cols-4.gap-8
+        = render partial: "products/product_card", collection: @similar_products, as: :product

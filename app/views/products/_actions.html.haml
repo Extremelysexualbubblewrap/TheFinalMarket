@@ -1,0 +1,6 @@
+.product-actions.mt-4.space-x-4
+  - unless current_user == @product.user
+    = render 'wishlist_button', product: @product
+    = button_to add_to_cart_path(@product), method: :post, class: 'btn btn-primary' do
+      %i.fas.fa-shopping-cart
+      Add to Cart

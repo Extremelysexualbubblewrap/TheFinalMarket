@@ -1,0 +1,8 @@
+<!-- app/views/messages/_message.html.erb -->
+<%= turbo_frame_tag message do %>
+  <div class="message <%= 'sent' if message.user == current_user %>">
+    <p><strong><%= message.user.username %></strong></p>
+    <p><%= message.body %></p>
+    <p class="text-xs text-gray-500"><%= time_ago_in_words(message.created_at) %> ago</p>
+  </div>
+<% end %>

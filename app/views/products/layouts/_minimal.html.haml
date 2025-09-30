@@ -1,0 +1,37 @@
+.product-page.minimal
+  .max-w-4xl.mx-auto.px-4.py-8
+    .grid.grid-cols-1.md:grid-cols-2.gap-8
+      .product-image
+        = image_tag @product.product_images.first&.image, class: "w-full rounded-lg shadow-sm"
+      
+      .product-info
+        %h1.text-2xl.font-medium= @product.name
+        
+        .price.mt-4
+          - case @price_display
+          - when "standard"
+            .text-2xl= number_to_currency(@product.price)
+          - when "with_savings"
+            .flex.items-center.gap-2
+              .text-2xl= number_to_currency(@product.price)
+              - if @product.compare_at_price.present?
+                .text-lg.line-through.text-gray-400= number_to_currency(@product.compare_at_price)
+                .text-sm.text-green-600= "Save #{number_to_percentage(100 - (@product.price / @product.compare_at_price * 100), precision: 0)}"
+          - when "with_comparison"
+            .text-2xl= number_to_currency(@product.price)
+            .text-sm.text-gray-600= "#{number_to_currency(@product.price_per_unit)} / #{@product.unit}"
+        
+        .actions.mt-6.space-y-4
+          = button_to add_to_cart_product_path(@product), class: "w-full btn-primary" do
+            Add to Cart
+          = button_to wishlist_add_item_path(product_id: @product), class: "w-full btn-secondary" do
+            Save for Later
+        
+        .description.mt-8.prose
+          = @product.description
+
+    - if @similar_products.any?
+      .related-products.mt-16
+        %h2.text-xl.font-medium.mb-4 You Might Also Like
+        .grid.grid-cols-2.md:grid-cols-4.gap-4
+          = render partial: "products/product_card", collection: @similar_products, as: :product

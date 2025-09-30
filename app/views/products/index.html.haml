@@ -1,0 +1,11 @@
+.products-index
+  %h1.text-2xl.font-bold.mb-6 Products
+
+  = render 'search_filters'
+
+  = turbo_frame_tag "products_list" do
+    .grid.grid-cols-1.md:grid-cols-2.lg:grid-cols-3.gap-6
+      = render @products
+
+    .mt-6
+      = paginate @products

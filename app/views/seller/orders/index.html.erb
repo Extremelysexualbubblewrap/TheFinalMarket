@@ -1,0 +1,29 @@
+<!-- app/views/seller/orders/index.html.erb -->
+<h1>My Sales</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Order ID</th>
+      <th>Buyer</th>
+      <th>Status</th>
+      <th>Total</th>
+      <th>Date</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @orders.each do |order| %>
+      <tr>
+        <td><%= order.id %></td>
+        <td><%= order.buyer.username %></td>
+        <td><%= order.status.humanize %></td>
+        <td><%= order.total_amount.format %></td>
+        <td><%= l(order.created_at, format: :long) %></td>
+        <td><%= link_to "View", seller_order_path(order), class: "btn btn-sm btn-secondary" %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= paginate @orders %>

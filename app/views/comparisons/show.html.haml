@@ -1,0 +1,134 @@
+.product-comparison.container.mx-auto.px-4.py-8
+  .flex.items-center.justify-between.mb-6
+    %h1.text-2xl.font-bold Product Comparison
+    
+    = button_to clear_comparisons_path,
+        method: :delete,
+        class: "btn btn-secondary",
+        data: { confirm: "Are you sure you want to clear your comparison list?" } do
+      %i.fas.fa-trash.mr-2
+      Clear All
+
+  - if @comparison_data[:basic_info].any?
+    .overflow-x-auto
+      %table.w-full.border-collapse
+        %thead
+          %tr
+            %th.p-4.border.bg-gray-50.sticky.left-0.z-10 Features
+            - @comparison_data[:basic_info].each do |info|
+              %th.p-4.border.bg-white.min-w-[250px]
+                .product-header
+                  = image_tag info[:image], class: "w-full h-48 object-cover mb-2" if info[:image].present?
+                  %h3.font-semibold= info[:name]
+                  %p.text-sm.text-gray-600= info[:brand]
+                  = button_to remove_item_comparisons_path(info[:id]),
+                      method: :delete,
+                      class: "text-red-600 hover:text-red-800 text-sm mt-2" do
+                    %i.fas.fa-times.mr-1
+                    Remove
+
+        %tbody
+          %tr.basic-info
+            %td.p-4.border.bg-gray-50.font-semibold.sticky.left-0 Description
+            - @comparison_data[:basic_info].each do |info|
+              %td.p-4.border
+                = truncate(info[:description], length: 150)
+
+          %tr
+            %td.p-4.border.bg-gray-50.font-semibold.sticky.left-0 Categories
+            - @comparison_data[:basic_info].each do |info|
+              %td.p-4.border
+                = info[:categories].join(", ")
+
+          %tr
+            %td.p-4.border.bg-gray-50.font-semibold.sticky.left-0 Tags
+            - @comparison_data[:basic_info].each do |info|
+              %td.p-4.border
+                = info[:tags].join(", ")
+
+          %tr.section-header
+            %td.p-4.border.bg-gray-100.font-bold.sticky.left-0{colspan: @comparison_data[:basic_info].length + 1}
+              Specifications
+
+          - @comparison_data[:specifications].first.keys.each do |spec|
+            %tr
+              %td.p-4.border.bg-gray-50.font-semibold.sticky.left-0= spec.titleize
+              - @comparison_data[:specifications].each do |specs|
+                %td.p-4.border= specs[spec]
+
+          %tr.section-header
+            %td.p-4.border.bg-gray-100.font-bold.sticky.left-0{colspan: @comparison_data[:basic_info].length + 1}
+              Pricing & Availability
+
+          %tr
+            %td.p-4.border.bg-gray-50.font-semibold.sticky.left-0 Base Price
+            - @comparison_data[:pricing].each do |pricing|
+              %td.p-4.border= number_to_currency(pricing[:base_price])
+
+          %tr
+            %td.p-4.border.bg-gray-50.font-semibold.sticky.left-0 Price Range
+            - @comparison_data[:pricing].each do |pricing|
+              %td.p-4.border
+                = number_to_currency(pricing[:min_price])
+                - if pricing[:max_price] != pricing[:min_price]
+                  = " - "
+                  = number_to_currency(pricing[:max_price])
+
+          %tr
+            %td.p-4.border.bg-gray-50.font-semibold.sticky.left-0 Stock Status
+            - @comparison_data[:availability].each do |availability|
+              %td.p-4.border
+                .stock-status{class: availability[:in_stock] ? 'text-green-600' : 'text-red-600'}
+                  = availability[:in_stock] ? 'In Stock' : 'Out of Stock'
+                .text-sm.text-gray-600
+                  = pluralize(availability[:variants_available], 'variant')
+                  available
+
+          %tr.section-header
+            %td.p-4.border.bg-gray-100.font-bold.sticky.left-0{colspan: @comparison_data[:basic_info].length + 1}
+              Ratings & Reviews
+
+          %tr
+            %td.p-4.border.bg-gray-50.font-semibold.sticky.left-0 Average Rating
+            - @comparison_data[:ratings].each do |rating|
+              %td.p-4.border
+                .flex.items-center
+                  .stars.text-yellow-400
+                    - 5.times do |i|
+                      %i{class: "fas fa-star#{i < rating[:average_rating] ? '' : '-o'}"}
+                  %span.ml-2= rating[:average_rating]
+                .text-sm.text-gray-600
+                  = pluralize(rating[:review_count], 'review')
+
+          %tr.section-header
+            %td.p-4.border.bg-gray-100.font-bold.sticky.left-0{colspan: @comparison_data[:basic_info].length + 1}
+              Shipping Information
+
+          %tr
+            %td.p-4.border.bg-gray-50.font-semibold.sticky.left-0 Estimated Delivery
+            - @comparison_data[:shipping_info].each do |shipping|
+              %td.p-4.border
+                = shipping[:shipping_time]
+                - if shipping[:free_shipping]
+                  .text-green-600.text-sm
+                    %i.fas.fa-check.mr-1
+                    Free Shipping
+                - if shipping[:shipping_restrictions].any?
+                  .text-red-600.text-sm.mt-1
+                    = shipping[:shipping_restrictions].join(", ")
+
+        %tfoot
+          %tr
+            %td.p-4.border.bg-gray-50.sticky.left-0
+            - @comparison_data[:basic_info].each_with_index do |info, index|
+              %td.p-4.border.text-center
+                = link_to "View Details", product_path(info[:id]), class: "btn btn-primary"
+                - if info[:availability]
+                  = button_to add_to_cart_path(info[:id]),
+                      method: :post,
+                      class: "btn btn-secondary mt-2 w-full" do
+                    Add to Cart
+  - else
+    .text-center.py-12
+      %p.text-gray-600.mb-4 No products added to comparison yet.
+      = link_to "Browse Products", products_path, class: "btn btn-primary"

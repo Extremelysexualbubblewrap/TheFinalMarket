@@ -1,0 +1,60 @@
+<!-- app/views/seller/products/_form.html.erb -->
+<%= form_with(model: [:seller, product], html: { class: "space-y-6" }) do |form| %>
+  <% if product.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-700 p-4 rounded-lg">
+      <h2 class="text-lg font-semibold mb-2"><%= pluralize(product.errors.count, "error") %> prohibited this product from being saved:</h2>
+      <ul class="list-disc list-inside">
+        <% product.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :name, class: "block text-sm font-medium text-gray-700" %>
+    <div class="mt-1">
+      <%= form.text_field :name, class: "spirit-input w-full" %>
+    </div>
+  </div>
+
+  <div>
+    <%= form.label :description, class: "block text-sm font-medium text-gray-700" %>
+    <div class="mt-1">
+      <%= form.rich_text_area :description, class: "spirit-input w-full" %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <%= form.label :price, class: "block text-sm font-medium text-gray-700" %>
+      <div class="mt-1">
+        <%= form.text_field :price, class: "spirit-input w-full" %>
+      </div>
+    </div>
+    <div>
+      <%= form.label :stock, class: "block text-sm font-medium text-gray-700" %>
+      <div class="mt-1">
+        <%= form.number_field :stock, class: "spirit-input w-full" %>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <%= form.label :category_id, class: "block text-sm font-medium text-gray-700" %>
+    <div class="mt-1">
+      <%= form.collection_select :category_id, Category.all, :id, :name, { prompt: "Select a category" }, { class: "spirit-input w-full" } %>
+    </div>
+  </div>
+
+  <div>
+    <%= form.label :image, class: "block text-sm font-medium text-gray-700" %>
+    <div class="mt-1">
+      <%= form.file_field :image, class: "spirit-input w-full" %>
+    </div>
+  </div>
+
+  <div class="flex justify-end">
+    <%= form.submit class: "spirit-button" %>
+  </div>
+<% end %>

@@ -1,0 +1,70 @@
+<div class="space-y-4">
+  <% messages.each do |message| %>
+    <div class="flex <%= message.user == current_user ? 'justify-end' : 'justify-start' %>">
+      <div class="max-w-[70%]">
+        <div class="flex items-end space-x-2">
+          <% unless message.user == current_user %>
+            <div class="flex-shrink-0">
+              <%= render partial: "users/avatar", locals: { user: message.user, size: "sm" } %>
+            </div>
+          <% end %>
+
+          <div>
+            <% unless message.user == current_user %>
+              <p class="text-xs text-gray-500 mb-1"><%= message.user.name %></p>
+            <% end %>
+
+            <div class="<%= message_bubble_classes(message) %>">
+              <% case message.message_type %>
+              <% when 'text' %>
+                <p class="text-sm"><%= message.body %></p>
+              
+              <% when 'image' %>
+                <% message.files.each do |file| %>
+                  <%= image_tag file, class: "rounded-lg max-w-sm" %>
+                <% end %>
+                <p class="text-sm mt-2"><%= message.body if message.body.present? %></p>
+              
+              <% when 'file' %>
+                <% message.files.each do |file| %>
+                  <%= link_to rails_blob_path(file, disposition: "attachment"), 
+                            class: "flex items-center space-x-2 text-sm text-blue-500 hover:text-blue-700" do %>
+                    <i class="fas fa-file"></i>
+                    <span><%= file.filename %></span>
+                  <% end %>
+                <% end %>
+                <p class="text-sm mt-2"><%= message.body if message.body.present? %></p>
+              
+              <% when 'system' %>
+                <p class="text-sm text-gray-500 italic"><%= message.body %></p>
+              <% end %>
+            </div>
+
+            <div class="flex items-center justify-end space-x-2 mt-1">
+              <p class="text-xs text-gray-400">
+                <%= message.created_at.strftime("%H:%M") %>
+              </p>
+              
+              <% if message.user == current_user %>
+                <div id="message_status_<%= message.id %>" class="text-xs">
+                  <%= render partial: "messages/status", locals: { message: message } %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<% content_for :javascript do %>
+  <script>
+    document.addEventListener("turbo:load", function() {
+      const messagesContainer = document.querySelector("[data-controller='scroll']");
+      if (messagesContainer) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }
+    });
+  </script>
+<% end %>

@@ -1,0 +1,19 @@
+.tag-details
+  .flex.items-center.justify-between.mb-6
+    %h1.text-2xl.font-bold
+      Products tagged with
+      %span.text-primary= @tag.name
+    
+    - if current_user&.admin?
+      .flex.gap-2
+        = link_to 'Edit', edit_tag_path(@tag), class: 'btn btn-secondary'
+        = button_to 'Delete', tag_path(@tag), method: :delete, class: 'btn btn-danger', data: { confirm: 'Are you sure?' }
+  
+  - if @tag.description.present?
+    %p.text-gray-600.mb-6= @tag.description
+  
+  .products-grid.grid.grid-cols-1.md:grid-cols-3.gap-6
+    = render partial: 'products/product', collection: @products
+  
+  .mt-6
+    = paginate @products

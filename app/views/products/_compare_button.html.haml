@@ -1,0 +1,16 @@
+.compare-button{id: "compare_button_#{product.id}"}
+  - if user_signed_in?
+    - if current_user.compare_list&.products&.include?(product)
+      = button_to remove_item_comparisons_path(product_id: product),
+          method: :delete,
+          class: "text-blue-600 hover:text-blue-800",
+          data: { turbo_stream: true } do
+        %i.fas.fa-balance-scale
+        Remove from Compare
+    - else
+      = button_to add_item_comparisons_path(product_id: product),
+          method: :post,
+          class: "text-gray-600 hover:text-blue-600",
+          data: { turbo_stream: true } do
+        %i.fas.fa-balance-scale
+        Add to Compare

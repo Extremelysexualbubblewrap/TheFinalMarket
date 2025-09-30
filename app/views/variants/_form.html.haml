@@ -1,0 +1,35 @@
+.variant-form
+  = form_with(model: [@product, @variant], local: true, class: 'space-y-6') do |f|
+    .grid.grid-cols-1.gap-6.sm:grid-cols-2
+      .field
+        = f.label :price, class: 'block text-sm font-medium text-gray-700'
+        .mt-1
+          = f.number_field :price, step: '0.01', class: 'input-field'
+          = error_message_for(@variant, :price)
+
+      .field
+        = f.label :stock_quantity, class: 'block text-sm font-medium text-gray-700'
+        .mt-1
+          = f.number_field :stock_quantity, class: 'input-field'
+          = error_message_for(@variant, :stock_quantity)
+
+    .field
+      = f.label :image, class: 'block text-sm font-medium text-gray-700'
+      .mt-1
+        = f.file_field :image, class: 'input-field', direct_upload: true
+        = error_message_for(@variant, :image)
+
+    - @option_types.each do |option_type|
+      .field
+        = f.label option_type.name, class: 'block text-sm font-medium text-gray-700'
+        .mt-1
+          = f.collection_select "option_value_ids[]",
+            option_type.option_values,
+            :id,
+            :name,
+            { prompt: "Select #{option_type.name}" },
+            { class: 'input-field' }
+
+    .actions.mt-6
+      = f.submit class: 'btn btn-primary'
+      = link_to 'Cancel', @product, class: 'btn btn-secondary ml-3'

@@ -1,0 +1,20 @@
+.recommendations-container
+  %h1.text-2xl.font-bold.mb-6 Recommended for You
+
+  .space-y-8
+    %section
+      %h2.text-xl.font-semibold.mb-4 Personalized Picks
+      .grid.grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-6
+        = render partial: 'products/product_card', collection: @recommendations, as: :product
+
+    - if @recently_viewed.present?
+      %section
+        %h2.text-xl.font-semibold.mb-4 Recently Viewed
+        .grid.grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-6
+          = render partial: 'products/product_card', collection: @recently_viewed, as: :product
+
+    - if @trending_products.present?
+      %section
+        %h2.text-xl.font-semibold.mb-4 Trending in Your Categories
+        .grid.grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-6
+          = render partial: 'products/product_card', collection: @trending_products, as: :product

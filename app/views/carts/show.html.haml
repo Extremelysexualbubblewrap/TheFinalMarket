@@ -1,0 +1,103 @@
+.cart-container.container.mx-auto.px-4.py-8
+  %h1.text-2xl.font-bold.mb-6 Your Shopping Cart
+
+  - if @cart.line_items.any?
+    .grid.grid-cols-1.lg:grid-cols-3.gap-8
+      .lg:col-span-2
+        .space-y-4
+          - @cart.line_items.each do |item|
+            .cart-item.bg-white.rounded-lg.shadow.p-4{id: dom_id(item)}
+              .flex.items-center.space-x-4
+                = image_tag item.variant&.image || item.product.image,
+                    class: "w-24 h-24 object-cover rounded"
+                
+                .flex-1
+                  = link_to item.product.name, product_path(item.product),
+                      class: "text-lg font-semibold hover:text-primary"
+                  
+                  - if item.variant
+                    %p.text-sm.text-gray-600= item.variant.name
+                  
+                  .flex.items-center.space-x-4.mt-2
+                    .quantity-control.flex.items-center.space-x-2
+                      = button_to "-", update_quantity_line_item_path(item, change: -1),
+                          method: :patch,
+                          class: "w-8 h-8 rounded-full border flex items-center justify-center #{item.quantity > 1 ? 'hover:bg-gray-100' : 'opacity-50 cursor-not-allowed'}",
+                          disabled: item.quantity <= 1
+                      
+                      %span.text-center.w-8= item.quantity
+                      
+                      = button_to "+", update_quantity_line_item_path(item, change: 1),
+                          method: :patch,
+                          class: "w-8 h-8 rounded-full border hover:bg-gray-100 flex items-center justify-center"
+                    
+                    %p.font-semibold= number_to_currency(item.total_price)
+                
+                .flex.flex-col.space-y-2
+                  = button_to line_item_path(item), 
+                      method: :delete,
+                      class: "text-red-600 hover:text-red-800 text-sm" do
+                    %i.fas.fa-trash
+                    Remove
+                  
+                  = button_to save_for_later_line_item_path(item),
+                      method: :post,
+                      class: "text-blue-600 hover:text-blue-800 text-sm" do
+                    %i.fas.fa-bookmark
+                    Save for Later
+
+      .lg:col-span-1
+        .bg-white.rounded-lg.shadow.p-6.space-y-6.sticky.top-4
+          %h2.text-lg.font-semibold.mb-4 Order Summary
+
+          .space-y-4
+            .flex.justify-between
+              %span.text-gray-600 Subtotal
+              %span.font-semibold= number_to_currency(@cart.subtotal)
+            
+            - if @cart.shipping_cost > 0
+              .flex.justify-between
+                %span.text-gray-600 Shipping
+                %span.font-semibold= number_to_currency(@cart.shipping_cost)
+            
+            - if @cart.tax_amount > 0
+              .flex.justify-between
+                %span.text-gray-600 Tax
+                %span.font-semibold= number_to_currency(@cart.tax_amount)
+            
+            .border-t.pt-4
+              .flex.justify-between
+                %span.text-lg.font-bold Total
+                %span.text-lg.font-bold= number_to_currency(@cart.total)
+
+          - delivery_estimate = DeliveryEstimator.new(@cart).estimate_delivery
+          .delivery-estimate.mt-6
+            %h3.font-semibold.mb-2 Estimated Delivery
+            %p.text-gray-600
+              = delivery_estimate[:earliest].strftime("%B %d")
+              = "-"
+              = delivery_estimate[:latest].strftime("%B %d")
+            
+            - if delivery_estimate[:expedited_available]
+              .mt-2.text-sm
+                %p.text-green-600
+                  %i.fas.fa-truck
+                  Expedited delivery available
+                %p.text-gray-600 Get it by #{(Date.current + delivery_estimate[:expedited_days]).strftime("%B %d")}
+
+          = button_to checkout_path,
+              method: :post,
+              class: "w-full btn btn-primary mt-6" do
+            Proceed to Checkout
+            %i.fas.fa-arrow-right.ml-2
+
+    - if @saved_items.any?
+      .mt-12
+        %h2.text-xl.font-semibold.mb-4 Saved for Later
+        .grid.grid-cols-1.md:grid-cols-2.lg:grid-cols-3.gap-6
+          = render partial: "saved_items/saved_item", collection: @saved_items
+
+  - else
+    .text-center.py-12
+      %p.text-gray-600.mb-4 Your cart is empty
+      = link_to "Continue Shopping", root_path, class: "btn btn-primary"

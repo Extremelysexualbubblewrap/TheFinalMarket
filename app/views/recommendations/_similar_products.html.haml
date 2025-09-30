@@ -1,0 +1,5 @@
+.similar-products.mt-8
+  %h3.text-lg.font-semibold.mb-4 Similar Products
+  
+  .grid.grid-cols-2.md:grid-cols-3.gap-4
+    = render partial: 'products/product_card', collection: @similar_products, as: :product

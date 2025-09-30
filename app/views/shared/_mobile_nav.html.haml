@@ -1,0 +1,26 @@
+.mobile-nav.fixed.bottom-0.left-0.right-0.bg-white.shadow-lg.border-t.md:hidden
+  .grid.grid-cols-5.h-16
+    = link_to root_path, class: "flex flex-col items-center justify-center #{current_page?(root_path) ? 'text-primary' : 'text-gray-600'}" do
+      %i.fas.fa-home.text-xl
+      %span.text-xs Home
+
+    = link_to categories_path, class: "flex flex-col items-center justify-center #{controller_name == 'categories' ? 'text-primary' : 'text-gray-600'}" do
+      %i.fas.fa-th-large.text-xl
+      %span.text-xs Categories
+
+    = link_to new_product_path, class: "flex flex-col items-center justify-center" do
+      .rounded-full.bg-primary.text-white.w-12.h-12.flex.items-center.justify-center.-mt-4.shadow-lg
+        %i.fas.fa-plus.text-xl
+
+    = link_to cart_path, class: "flex flex-col items-center justify-center #{controller_name == 'carts' ? 'text-primary' : 'text-gray-600'}" do
+      .relative
+        %i.fas.fa-shopping-cart.text-xl
+        - if cart_items_count > 0
+          .absolute.-top-1.-right-1.bg-red-500.text-white.rounded-full.w-4.h-4.text-xs.flex.items-center.justify-center
+            = cart_items_count
+      %span.text-xs Cart
+
+    = link_to user_signed_in? ? profile_path : new_user_session_path, 
+        class: "flex flex-col items-center justify-center #{controller_name == 'users' ? 'text-primary' : 'text-gray-600'}" do
+      %i.fas.fa-user.text-xl
+      %span.text-xs= user_signed_in? ? 'Profile' : 'Sign In'

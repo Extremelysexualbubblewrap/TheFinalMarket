@@ -33,7 +33,18 @@ class OrdersController < ApplicationController
     end
 
     if @order.save
-      redirect_to @order, notice: 'Order was successfully created.'
+      @order.order_items.each do |order_item|
+        ReviewInvitation.create!(
+          order: @order,
+          user: current_user,
+          item: order_item.item
+        )
+      end
+
+      # Clear the cart after successful order
+      current_user.cart_items.destroy_all
+      
+      redirect_to @order, notice: 'Order was successfully created. Check your email for review invitations!'
     else
       @cart_items = current_user.cart_items.includes(:item)
       @total = current_user.cart_total
