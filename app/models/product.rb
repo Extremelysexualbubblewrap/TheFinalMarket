@@ -170,7 +170,6 @@ class Product < ApplicationRecord
 
     search_results
   end
-  end
 
   def max_price
     variants.maximum(:price)
